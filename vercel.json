@@ -6,22 +6,13 @@
         {
             "src": "package.json",
             "use": "@vercel/static-build",
-            // Assumes a standard build command like 'npm run build' or 'yarn build'
             "config": {
                 "installCommand": "npm install",
                 "buildCommand": "npm run build"
             }
         }
     ],
-    // This section defines the directory Vercel should serve after the build
-    // Common paths are 'dist' (for Vite) or 'build' (for Create React App)
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/"
-        }
-    ],
-    // Optional: Define custom headers for security, performance, or SEO
+    // Custom headers remain the same for security/performance
     "headers": [
         {
             "source": "/(.*)",
@@ -35,6 +26,16 @@
                     "value": "nosniff"
                 }
             ]
+        }
+    ],
+    // === CRITICAL FIX: Rewrite Rules for SPA Routing ===
+    // This tells Vercel that for any path ("/(.*)") that doesn't correspond
+    // to a static file, rewrite the destination to the single entry point ("index.html").
+    // This allows the React Router to take over and render the correct component.
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
