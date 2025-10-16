@@ -1,7 +1,6 @@
 {
     "version": 2,
     "name": "AutoPrintX",
-    // This section defines the build process
     "builds": [
         {
             "src": "package.json",
@@ -12,7 +11,6 @@
             }
         }
     ],
-    // Custom headers remain the same for security/performance
     "headers": [
         {
             "source": "/(.*)",
@@ -28,14 +26,10 @@
             ]
         }
     ],
-    // === CRITICAL FIX: Rewrite Rules for SPA Routing ===
-    // This tells Vercel that for any path ("/(.*)") that doesn't correspond
-    // to a static file, rewrite the destination to the single entry point ("index.html").
-    // This allows the React Router to take over and render the correct component.
     "rewrites": [
         {
             "source": "/(.*)",
-            "destination": "/index.html"
+            "destination": "/"
         }
     ]
 }
