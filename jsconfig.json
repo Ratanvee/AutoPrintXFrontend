@@ -1,0 +1,10 @@
+    {
+      "compilerOptions": {
+        "baseUrl": "src", // Set the base URL to your 'src' folder
+        "paths": {
+          "@api/*": ["api/*"], // Define aliases
+        //   "@utils/*": ["utils/*"]
+        }
+      },
+      "include": ["src"]
+    }

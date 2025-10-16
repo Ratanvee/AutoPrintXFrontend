@@ -1,0 +1,280 @@
+// import axios from "axios";
+
+// const API_URL = "http://127.0.0.1:8000/api/";
+// const LOGIN_URL = `${API_URL}token/`;
+// const REFRESH_URL = `${API_URL}token/refresh/`;
+// const NOTES_URL = `${API_URL}notes/`;
+// const LOGOUT_URL = `${API_URL}logout/`;
+// const AUTH_URL = `${API_URL}auth/`;
+
+// export const login = async (username, password) => {
+//     const response = await axios.post(LOGIN_URL,
+//         { username: username, password: password },
+//         { withCredentials: true }
+
+//     )
+//     return response.data.success
+// }
+
+// export const refreshToken = () => {
+//     try {
+//         const response = axios.post(REFRESH_URL,
+//             {},
+//             { withCredentials: true }
+//         )
+//         return true
+//     } catch (error) {
+//         return false
+//     }
+// }
+
+
+// export const get_notes = async () => {
+//     try {
+//         const response = await axios.get(NOTES_URL,
+//             { withCredentials: true }
+//         )
+//         return response.data
+
+//     } catch (error) {
+//         return call_refresh(error, axios.get(NOTES_URL, { withCredentials: true }))
+//     }
+// }
+
+// const call_refresh = async (error, func) => {
+//     if (error.response && error.response.status === 401) {
+//         const refresh_response = await refreshToken();
+//         if (refresh_response) {
+//             const retry_response = await func();
+//             return retry_response.data
+//         }
+//     }
+// }
+
+
+// export const logout = async () => {
+//     try {
+//         await axios.post(LOGOUT_URL,
+//             {},
+//             { withCredentials: true }
+//         )
+//         return true
+//     } catch (error) {
+//         return false
+//     }
+// }
+
+
+// export const is_authenticated = async () => {
+//     try {
+//         await axios.post(AUTH_URL,
+//             {},
+//             { withCredentials: true }
+//         )
+//         return true 
+//     } catch (error) {
+//         return false
+//     }
+
+// }
+
+
+import axios from "axios";
+
+const API_URL = "http://127.0.0.1:8000/api/";
+// const API_URL = "http://localhost:8000/api/";
+const LOGIN_URL = `${API_URL}token/`;
+const REFRESH_URL = `${API_URL}token/refresh/`;
+const NOTES_URL = `${API_URL}notes/`;
+const LOGOUT_URL = `${API_URL}logout/`;
+const AUTH_URL = `${API_URL}auth/`;
+const DASHBOARD_URL = `${API_URL}dashboards/`;
+const UPLOAD_URL = "http://localhost:8000/api/uploadss/";
+
+axios.defaults.withCredentials = true;
+
+// export const login = async (username, password) => {
+//   try {
+//     console.log("Attempting login...")
+//     const response = await axios.post(
+//       LOGIN_URL,
+//       { username, password },
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     return response.data.success;
+//   } catch (error) {
+//     console.error("Login Error:", error);
+//     return false;
+//   }
+// };
+
+
+export const login = async (username, password) => {
+  try {
+    console.log("Attempting login...");
+    const response = await axios.post(LOGIN_URL, { username, password }, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,  // Important for cookies
+    });
+
+    if (response.data.success) {
+      return true;
+    } else {
+      // console.error('Login failed:', response.data.error);
+      // setErrorMessage('Incorrect username or password');
+      return false;
+    }
+
+  } catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+    return false;
+  }
+};
+
+
+
+export const refreshToken = async () => {
+  try {
+    await axios.post(
+      REFRESH_URL,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return true;
+  } catch (error) {
+    console.error("Refresh Error:", error);
+    return false;
+  }
+};
+
+export const get_notes = async () => {
+  try {
+    const response = await axios.get(NOTES_URL);
+    return response.data;
+  } catch (error) {
+    return call_refresh(error, () => axios.get(NOTES_URL));
+  }
+};
+
+const call_refresh = async (error, func) => {
+  if (error.response && error.response.status === 401) {
+    const refresh_response = await refreshToken();
+    if (refresh_response) {
+      const retry_response = await func();
+      return retry_response.data;
+    }
+  }
+};
+
+export const logout = async () => {
+  try {
+    await axios.post(
+      LOGOUT_URL,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return true;
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return false;
+  }
+};
+
+// export const is_authenticated = async () => {
+//   try {
+//     await axios.post(
+//       AUTH_URL,
+//       {},
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     return true;
+//   } catch (error) {
+//     console.error("Auth Check Error:", error);
+//     return false;
+//   }
+// };
+
+export const is_authenticated = async () => {
+  console.log("Checking authentication status..................");
+  try {
+    await axios.get(AUTH_URL, { withCredentials: true });
+    console.log("User is authenticated.");
+    return true;
+  } catch (error) {
+    // console.error("Auth Check Error:", error);
+    return false;
+  }
+};
+
+
+
+// export const get_dashboard = async () => {
+//   try {
+//     const response = await axios.get(DASHBOARD_URL, { withCredentials: true });
+//     console.log("Dashboard Data:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Dashboard Fetch Error:", error);
+//     return [];
+//   }
+// };
+
+// export const get_dashboard = async () => {
+//   try {
+//     const token = localStorage.getItem("authToken");  // assuming you saved it earlier
+
+//     const response = await axios.get(DASHBOARD_URL, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     console.log("Dashboard Data:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Dashboard Fetch Error:", error);
+//     return [];
+//   }
+// };
+// import axios from 'axios';
+
+export const get_dashboard = async () => {
+  try {
+    const response = await axios.get(DASHBOARD_URL, {
+      withCredentials: true  // Ensure cookies are sent
+    });
+    console.log('Dashboard Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Dashboard Fetch Error:', error);
+    return null;
+  }
+};
+
+
+
+export const upload_data = async () => {
+  try {
+    const response = await axios.get(UPLOAD_URL, { withCredentials: true });
+    console.log("Upload Page : ")
+    return response.data;
+  } catch (error) {
+    console.error("somthing went wrong : ", error)
+    return [];
+  }
+}
