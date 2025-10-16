@@ -1,0 +1,40 @@
+{
+    "version": 2,
+    "name": "AutoPrintX",
+    // This section defines the build process
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            // Assumes a standard build command like 'npm run build' or 'yarn build'
+            "config": {
+                "installCommand": "npm install",
+                "buildCommand": "npm run build"
+            }
+        }
+    ],
+    // This section defines the directory Vercel should serve after the build
+    // Common paths are 'dist' (for Vite) or 'build' (for Create React App)
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
+    ],
+    // Optional: Define custom headers for security, performance, or SEO
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Strict-Transport-Security",
+                    "value": "max-age=63072000; includeSubDomains; preload"
+                },
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                }
+            ]
+        }
+    ]
+}
