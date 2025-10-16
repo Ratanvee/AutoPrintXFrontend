@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
-
+import { SignUpAPI } from '../api/endpoints'
 function SignUpForm() {
   const [state, setState] = useState({
     name: "",
@@ -46,24 +46,36 @@ function SignUpForm() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/register/",
-        {
-          username: state.name,
-          email: state.email,
-          password: state.password,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true, // ✅ ensures cookie handling works
-        }
-      );
+      // const response = await axios.post(
+      //   "http://127.0.0.1:8000/api/register/",
+      //   {
+      //     username: state.name,
+      //     email: state.email,
+      //     password: state.password,
+      //   },
+      //   {
+      //     headers: { "Content-Type": "application/json" },
+      //     withCredentials: true, // ✅ ensures cookie handling works
+      //   }
+      // );
 
-      if (response.data.success) {
+
+      // if (response.data.success) {
+      //   alert("Registration successful! Please sign in.");
+      //   setState({ name: "", email: "", password: "" });
+      // } else {
+      //   alert("Error: " + JSON.stringify(response.data.errors));
+      // }
+      const data = await SignUpAPI(state.name, state.email, state.password)
+      if (data.success) {
         alert("Registration successful! Please sign in.");
         setState({ name: "", email: "", password: "" });
-      } else {
-        alert("Error: " + JSON.stringify(response.data.errors));
+      }
+      // else {
+      //   alert('somthing is wrong.....');
+      // }
+      else {
+        alert("Error: " + JSON.stringify(data.errors));
       }
     } catch (error) {
       console.error("Registration error:", error);

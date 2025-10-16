@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { User, Building, Shield, Bell, CreditCard, Save, Camera, Eye, EyeOff } from "lucide-react"
 // import QRCode from "react-qr-code"
 import SmartDocXPoster from './QRCodeGenerator'
-
+import { get_dashboard } from "./api/endpoints";
 const SettingsSection = () => {
   const [activeTab, setActiveTab] = useState("general")
   const [showPassword, setShowPassword] = useState(false)
@@ -68,6 +68,17 @@ const SettingsSection = () => {
     // Save settings logic here
     console.log(`Saving ${section} settings:`, settings[section])
   }
+
+
+  const [QRData, setQRData] = useState(null);
+  const fetchDashboardData = async () => {
+    const data = await get_dashboard();
+    setQRData(data);
+    // console.log("Fetched Dashboard Data:", data);
+  }
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   return (
     <motion.div
@@ -263,7 +274,7 @@ const SettingsSection = () => {
                     Update Profile
                   </motion.button>
                 </form>
-                <SmartDocXPoster />
+                <SmartDocXPoster value={`https://auto-print-x-luxl.vercel.app/upload/${QRData.user.unique_url}`} ownerName={QRData.user.username} />
               </motion.div>
             )}
 

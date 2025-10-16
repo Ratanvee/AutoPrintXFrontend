@@ -14,7 +14,7 @@ import SettingsSection from "../components/Dashboard/SettingsSection"
 import NotificationsPanel from "../components/Dashboard/NotificationsPanel"
 import '../styles/styles/dashboard.css';
 // Updated import path for dashboard styles
-import { is_authenticated, get_dashboard } from "../api/endpoints";
+// import { is_authenticated } from "../api/endpoints";
 import { useEffect } from "react";
 const Dashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -38,17 +38,17 @@ const Dashboard = () => {
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
-  const [dashboardData, setDashboardData] = useState(null);
+  // const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await get_dashboard();
-      setDashboardData(data);
+    // const fetchData = async () => {
+    //   const data = await get_dashboard();
+    //   setDashboardData(data);
       document.title = 'AutoPrintX | Dashboard';
-    };
+    });
 
-    fetchData();
-  }, [get_dashboard]);
+  //   fetchData();
+  // }, [get_dashboard]);
 
   return (
     <div className="dashboard-container">

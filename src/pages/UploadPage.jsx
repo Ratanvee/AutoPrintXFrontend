@@ -13,6 +13,8 @@ import { useLocation } from 'react-router-dom';
 import CurrencyInput from 'react-currency-input-field';
 import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf.mjs";
+import { UploadDataAPI, CreateOrdersRazorpay } from '../api/endpoints'
+
 
 GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.mjs",
@@ -46,82 +48,6 @@ export default function PrintOrderForm() {
     setFile(e.target.files[0]);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   const data = new FormData();
-  //   if (file) {
-  //     data.append("FileUpload", file);
-  //   }
-  //   for (const key in formData) {
-  //     data.append(key, formData[key]);
-  //   }
-
-
-
-  //   try {
-  //     const path = location.pathname.split('/').pop(); // Extract the last segment of the URL
-  //     console.log("this is path:", path)
-  //     // const path = "ratan-erojldjfd"
-  //     // Replace with your actual API endpoint
-  //     const response = await axios.post(`http://127.0.0.1:8000/api/upload/${path}/`, data, {
-  //       withCredentials: true,  // Important if using cookies
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-  //     alert("Order Submitted Successfully!");
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert("Failed to submit order.");
-  //   }
-  //   setLoading(false);
-  // };
-
-  // const { slug } = useParams(); // <-- grabs "ratan-erojldjfd" from URL
-  // console.log("Slug from URL:", slug);
-  // console.log("thisis odsjlfj dlkfj dljfd")
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   const data = new FormData();
-
-  //   if (file) {
-  //     data.append("file", file);  // Ensure field name matches backend expectation
-  //   }
-
-  //   for (const key in formData) {
-  //     data.append(key, formData[key].toString());  // Convert all values to string
-  //   }
-
-  //   try {
-  //     const path = location.pathname.split('/').pop(); // Get slug from URL
-  //     console.log("Slug extracted from URL:", path);
-
-  //     const response = await axios.post(
-  //       `http://127.0.0.1:8000/api/upload/${path}/`,
-  //       data,
-  //       {
-  //         withCredentials: true,
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //       }
-  //     );
-
-  //     alert("Order Submitted Successfully!");
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error("Upload Error:", error.response?.data || error.message);
-  //     alert("Failed to submit order.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const [orderId, setOrderId] = useState("");
 
   const generateOrderId = () => {
@@ -141,8 +67,8 @@ export default function PrintOrderForm() {
     const paperCost = printOptions.paperType === "premium" ? 2 : 0
     const bindingCost = printOptions.binding === "spiral" ? 3 : printOptions.binding === "hardcover" ? 8 : 0
     const pages = uploadedFiles.reduce((acc, file) => acc + file.pages, 0) // Assume 10 pages per file
-    console.log("this is pages:", pages)
-    console.log("this is copies:", printOptions.copies)
+    // console.log("this is pages:", pages)
+    // console.log("this is copies:", printOptions.copies)
     // const total = 
     // setTotalAmount(total)
     return ((basePrice * pages + paperCost + bindingCost) * printOptions.copies).toFixed(2)
@@ -195,13 +121,14 @@ export default function PrintOrderForm() {
       // Generate a unique URL slug from location pathname
       const uniqueUrl = location.pathname.split('/').pop();
 
-      const response = await axios.post(`http://127.0.0.1:8000/api/upload/${uniqueUrl}/`, formData, {
-        withCredentials: true,
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      // const response = await axios.post(`http://127.0.0.1:8000/api/upload/${uniqueUrl}/`, formData, {
+      //   withCredentials: true,
+      //   headers: { 'Content-Type': 'multipart/form-data' },
+      // });
+      const data = await UploadDataAPI(formData, uniqueUrl)
 
       alert("Order submitted successfully!");
-      console.log("Backend response:", response.data);
+      console.log("Backend response:", data);
 
       // Move to confirmation step
       nextStep();
@@ -212,28 +139,6 @@ export default function PrintOrderForm() {
 
     setLoading(false);
   };
-
-
-
-
-  useEffect(() => {
-    const fullUrl = window.location.href;
-    const path = location.pathname; // e.g., "/path"
-    const query = location.search;
-    const hash = location.hash;
-    console.log("Full URL:", fullUrl); // e.g., "https://example.com/path?query=value#hash"
-    console.log("Path:", path); // e.g., "/path"
-    console.log("Query:", query);
-    console.log("Hash:", hash);
-    console.log("this is order id : ", generateOrderId())
-    // const amount = calculateTotal();
-    // setTotalAmount(amount)
-  }, [location]);
-
-
-
-
-
 
   const [currentStep, setCurrentStep] = useState(1)
   const [uploadedFiles, setUploadedFiles] = useState([])
@@ -247,57 +152,7 @@ export default function PrintOrderForm() {
   })
   const [paymentMethod, setPaymentMethod] = useState("rezorpay")
 
-  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  //   accept: {
-  //     "application/pdf": [".pdf"],
-  //     "application/msword": [".doc"],
-  //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-  //     "image/*": [".png", ".jpg", ".jpeg"],
-  //   },
-  //   onDrop: (acceptedFiles) => {
-  //     const newFiles = acceptedFiles.map((file) => ({
-  //       id: Date.now() + Math.random(),
-  //       file,
-  //       name: file.name,
-  //       size: file.size,
-  //       type: file.type,
-  //     }))
-  //     setUploadedFiles((prev) => [...prev, ...newFiles])
-  //   },
-  // })
 
-  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  //   accept: {
-  //     "application/pdf": [".pdf"],
-  //     "application/msword": [".doc"],
-  //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-  //     "image/*": [".png", ".jpg", ".jpeg"],
-  //   },
-  //   onDrop: async (acceptedFiles) => {
-  //     const newFiles = await Promise.all(
-  //       acceptedFiles.map(async (file) => {
-  //         let pageCount = 1;
-
-  //         if (file.type === "application/pdf") {
-  //           const pdfData = await file.arrayBuffer();
-  //           const pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
-  //           pageCount = pdfDoc.numPages;
-  //         }
-
-  //         return {
-  //           id: Date.now() + Math.random(),
-  //           file,
-  //           name: file.name,
-  //           size: file.size,
-  //           type: file.type,
-  //           pages: pageCount,
-  //         };
-  //       })
-  //     );
-
-  //     setUploadedFiles((prev) => [...prev, ...newFiles]);
-  //   },
-  // });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     // accept all documents and images
@@ -387,16 +242,17 @@ export default function PrintOrderForm() {
     e.preventDefault();
 
     // 1. Call backend to create order
-    const response = await fetch("http://localhost:8000/api/create-order/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount }),
-    });
-    const order = await response.json();
+    // const response = await fetch("http://localhost:8000/api/create-order/", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ amount }),
+    // });
+    // const order = await response.json();
+    const order = await CreateOrdersRazorpay(JSON.stringify({amount}))
 
     // 2. Open Razorpay UI
     const options = {
-      key: "rzp_test_IFaauhhkMT5JlL",
+      key: import.meta.env.VITE_RazorPay_Key,
       amount: order.amount, // already in paise from backend
       currency: order.currency,
       name: "PrintEase",
@@ -1031,107 +887,3 @@ export default function PrintOrderForm() {
   );
 }
 
-
-
-// import { useState } from 'react';
-// import axios from 'axios';
-
-// function PrintOrderForm({ slug }) {
-//   const [formData, setFormData] = useState({
-//     PaperSize: '',
-//     PaperType: '',
-//     PrintColor: '',
-//     PrintSide: '',
-//     Binding: '',
-//     NumberOfCopies: '',
-//     PaymentStatus: '',
-//     Owner: '',
-//     Updated_at: '',
-//     Transaction_id: '',
-//     NoOfPages: '',
-//   });
-
-//   const [file, setFile] = useState(null);
-//   const [loading, setLoading] = useState(false);
-
-//   const handleChange = (e) => {
-//     setFormData(prev => ({
-//       ...prev,
-//       [e.target.name]: e.target.value,
-//     }));
-//   };
-
-//   const handleFileChange = (e) => {
-//     setFile(e.target.files[0]);
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-
-//     try {
-//       const uploadData = new FormData();
-//       const path = location.pathname.split('/').pop(); // Extract the last segment of the URL
-//       console.log("this is path:", path)
-//       // Append file
-//       if (file) uploadData.append('file', file);
-
-//       // Append other form data
-//       Object.keys(formData).forEach(key => {
-//         uploadData.append(key, formData[key]);
-//       });
-
-//       // Optionally include the slug in payload
-//       uploadData.append('slug', slug);
-
-//       const response = await axios.post(
-//         `http://localhost:8000/api/upload/${path}`,  // Replace with your actual API URL
-//         uploadData,
-//         {
-//           withCredentials: true,  // If using cookies for auth
-//           headers: { 'Content-Type': 'multipart/form-data' }
-//         }
-//       );
-
-//       console.log('Order Submitted:', response.data);
-//       alert('Print order submitted successfully!');
-//     } catch (error) {
-//       console.error('Submit Error:', error.response?.data || error.message);
-//       alert('Failed to submit order. Please try again.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="p-6 max-w-lg mx-auto bg-white shadow-lg rounded-xl">
-//       <h2 className="text-2xl font-bold mb-4">Place Print Order</h2>
-
-//       <form onSubmit={handleSubmit} className="space-y-4">
-//         <input type="file" onChange={handleFileChange} required />
-
-//         <input type="text" name="PaperSize" placeholder="Paper Size" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="PaperType" placeholder="Paper Type" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="PrintColor" placeholder="Print Color" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="PrintSide" placeholder="Print Side" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="Binding" placeholder="Binding" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="number" name="NumberOfCopies" placeholder="Number Of Copies" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="PaymentStatus" placeholder="Payment Status" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="Owner" placeholder="Owner" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="datetime-local" name="Updated_at" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="text" name="Transaction_id" placeholder="Transaction ID" onChange={handleChange} className="border p-2 w-full" />
-//         <input type="number" name="NoOfPages" placeholder="Number Of Pages" onChange={handleChange} className="border p-2 w-full" />
-
-//         <button
-//           type="submit"
-//           disabled={loading}
-//           className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700 w-full"
-//         >
-//           {loading ? "Submitting..." : "Submit Order"}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default PrintOrderForm;

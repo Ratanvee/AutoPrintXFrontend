@@ -89,8 +89,10 @@ const NOTES_URL = `${API_URL}notes/`;
 const LOGOUT_URL = `${API_URL}logout/`;
 const AUTH_URL = `${API_URL}auth/`;
 const DASHBOARD_URL = `${API_URL}dashboards/`;
-const UPLOAD_URL = "http://localhost:8000/api/uploadss/";
-
+// const UPLOAD_URL = "http://localhost:8000/api/uploadss/";
+const UPLOAD_URL = `${API_URL}upload/`
+const CREATEORDERS_URL = `${API_URL}create-order/`
+const SIGNUP_URL = `${API_URL}register/`
 axios.defaults.withCredentials = true;
 
 // export const login = async (username, password) => {
@@ -135,6 +137,27 @@ export const login = async (username, password) => {
   }
 };
 
+export const SignUpAPI = async(username, email, password) => {
+  try {
+    const response = await axios.post(
+      SIGNUP_URL,
+      {
+        username,
+        email,
+        password,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true, // ✅ ensures cookie handling works
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Register Error:", error);
+    // alert('Somthing is wrong : ',error)
+    return response.errors;
+  }
+};
 
 
 export const refreshToken = async () => {
@@ -223,58 +246,32 @@ export const is_authenticated = async () => {
 };
 
 
-
-// export const get_dashboard = async () => {
-//   try {
-//     const response = await axios.get(DASHBOARD_URL, { withCredentials: true });
-//     console.log("Dashboard Data:", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Dashboard Fetch Error:", error);
-//     return [];
-//   }
-// };
-
-// export const get_dashboard = async () => {
-//   try {
-//     const token = localStorage.getItem("authToken");  // assuming you saved it earlier
-
-//     const response = await axios.get(DASHBOARD_URL, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     console.log("Dashboard Data:", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Dashboard Fetch Error:", error);
-//     return [];
-//   }
-// };
-// import axios from 'axios';
-
-export const get_dashboard = async () => {
+export const UploadDataAPI = async (data, uniqueUrl) => {
   try {
-    const response = await axios.get(DASHBOARD_URL, {
-      withCredentials: true  // Ensure cookies are sent
+    const response = await axios.post(`${UPLOAD_URL}${uniqueUrl}/`, data, {
+      withCredentials: true,
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log('Dashboard Data:', response.data);
-    return response.data;
+    return response.data
   } catch (error) {
-    console.error('Dashboard Fetch Error:', error);
-    return null;
+    console.error("Order place Error : ",error)
+    return false;
   }
 };
 
 
-
-export const upload_data = async () => {
+export const CreateOrdersRazorpay = async (data) => {
   try {
-    const response = await axios.get(UPLOAD_URL, { withCredentials: true });
-    console.log("Upload Page : ")
-    return response.data;
+    const response = await fetch(CREATEORDERS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: data,
+    });
+    return response.json();
   } catch (error) {
-    console.error("somthing went wrong : ", error)
-    return [];
+    console.error("Create Order Error : ", error)
+    return false;
   }
-}
+};
+
+

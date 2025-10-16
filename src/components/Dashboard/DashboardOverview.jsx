@@ -6,7 +6,7 @@ import { ShoppingCart, Users, DollarSign, Printer, Eye, Download, MoreHorizontal
 import StatCard from "./StatCard"
 import RecentOrders from "./RecentOrders"
 // import InteractiveChart from "./InteractiveChart"
-import { get_dashboard, dashboardOverview } from "./api/endpoints";
+import { get_dashboard, dashboardOverview, fetchChartDataAPI } from "./api/endpoints";
 // import { useState, useEffect } from "react";
 // import { motion } from "framer-motion";
 // import { Eye, Download, MoreHorizontal } from "lucide-react";
@@ -16,19 +16,6 @@ import axios from "axios";
 // import QRCode from "react-qr-code"
 
 const DashboardOverview = () => {
-
-  const [dashboardData, setDashboardData] = useState(null);
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        const data = await get_dashboard();
-        setDashboardData(data);
-      };
-  
-      fetchData();
-    }, [get_dashboard]);
-
-
     const [dashboardOverviewData, setDashboardOverviewData] = useState(null);
     useEffect(() => {
       const fetchData = async () => {
@@ -40,43 +27,27 @@ const DashboardOverview = () => {
       fetchData();
     }, [dashboardOverview]);
 
-  const [timeRange, setTimeRange] = useState("7d")
-  const [stats, setStats] = useState({
-    // totalOrders: { value: dashboardOverviewData?.dashboard_stats.orders.overall || 0, change: 15, trend: "up" },
-    totalCustomers: { value: dashboardData?.user.total_customers || 0, change: 12, trend: "up" },
-    totalRevenue: { value: dashboardData?.user.total_revenue || 0, change: 18, trend: "up" },
-    pagesPrinted: { value: 20, change: 22, trend: "up" },
-  })
+    
+    const [chartData, setChartData] = useState(null);
+    const [filter, setFilter] = useState("day"); // day, week, month, overall
 
-  const [recentActivity, setRecentActivity] = useState([
-    { id: 1, type: "order", message: "New order from John Doe", time: "2 min ago" },
-    { id: 2, type: "payment", message: "Payment received for Order #ORD-0024", time: "5 min ago" },
-    { id: 3, type: "delivery", message: "Order #ORD-0023 delivered", time: "10 min ago" },
-    { id: 4, type: "customer", message: "New customer registration", time: "15 min ago" },
-  ])
+    const fetchChartData = async (filterType) => {
+      const chartData = await fetchChartDataAPI(filterType);
+      setChartData(chartData);
+    };
+    
+    const [timeRange, setTimeRange] = useState("7d")
+  
+    const [recentActivity, setRecentActivity] = useState([
+      { id: 1, type: "order", message: "New order from John Doe", time: "2 min ago" },
+      { id: 2, type: "payment", message: "Payment received for Order #ORD-0024", time: "5 min ago" },
+      { id: 3, type: "delivery", message: "Order #ORD-0023 delivered", time: "10 min ago" },
+      { id: 4, type: "customer", message: "New customer registration", time: "15 min ago" },
+    ])
 
-  // const chartData = {
-  //   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  //   datasets: [
-  //     {
-  //       label: "Revenue",
-  //       data: [12000, 19000, 15000, 25000, 22000, 30000, 28000, 35000, 40000, 42000, 45000, 48000],
-  //       borderColor: "#0a2463",
-  //       backgroundColor: "rgba(10, 36, 99, 0.1)",
-  //       tension: 0.4,
-  //     },
-  //     {
-  //       label: "Orders",
-  //       data: [120, 190, 150, 250, 220, 300, 22280, 350, 400, 420, 450, 480],
-  //       borderColor: "#2176ff",
-  //       backgroundColor: "rgba(33, 118, 255, 0.1)",
-  //       tension: 0.4,
-  //     },
-  //   ],
-  // }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
+    const containerVariants = {
+      hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
@@ -93,19 +64,6 @@ const DashboardOverview = () => {
       transition: { duration: 0.5 },
     },
   }
-  const [chartData, setChartData] = useState(null);
-  const [filter, setFilter] = useState("day"); // day, week, month, overall
-
-  const fetchChartData = async (filterType) => {
-    try {
-      const res = await axios.get(`http://127.0.0.1:8000/api/chart-data/?filter=${filterType}`, {
-        withCredentials: true, // include cookies if required for auth
-      });
-      setChartData(res.data);
-    } catch (err) {
-      console.error("Chart Data Fetch Error:", err);
-    }
-  };
 
   useEffect(() => {
     fetchChartData(filter);
@@ -121,7 +79,7 @@ const DashboardOverview = () => {
         {/* {dashboardData && (
           <pre>{JSON.stringify(dashboardData, null, 2)}</pre>
         )} */}
-        <a href={dashboardData ? `/upload/${dashboardData.user.unique_url}` : '#'}>/upload/{dashboardData ? dashboardData.user.unique_url : 'Loading...'}</a>
+        <a href={dashboardOverviewData ? `/upload/${dashboardOverviewData.OrderOverview[0].unique_url}` : '#'}>/upload/{dashboardOverviewData ? dashboardOverviewData.OrderOverview[0].unique_url : 'Loading...'}</a>
         <div className="time-range-selector">
           {["24h", "7d", "30d", "90d"].map((range) => (
             <button
@@ -164,7 +122,7 @@ const DashboardOverview = () => {
         <StatCard
           icon={Printer}
           title="Pages Printed"
-          value={dashboardOverviewData ? dashboardOverviewData.OrderOverview[0].dashboard_stats.printed_pages.overall.toLocaleString() : "Loading..."}
+          value={dashboardOverviewData ? dashboardOverviewData.OrderOverview[0].dashboard_stats.printed_pages.overall : "Loading..."}
           change={dashboardOverviewData ? Math.abs(dashboardOverviewData.OrderOverview[0].dashboard_stats.printed_pages.percent_change) : 0}
           trend={dashboardOverviewData ? (dashboardOverviewData.OrderOverview[0].dashboard_stats.printed_pages.percent_change >= 0 ? "up" : "down") : "up"}
           period="from yesterday"

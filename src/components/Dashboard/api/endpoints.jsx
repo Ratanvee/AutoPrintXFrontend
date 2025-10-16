@@ -9,7 +9,7 @@ const NOTES_URL = `${API_URL}notes/`;
 const LOGOUT_URL = `${API_URL}logout/`;
 const AUTH_URL = `${API_URL}auth/`;
 const DASHBOARD_URL = `${API_URL}dashboards/`;
-const UPLOAD_URL = "http://localhost:8000/customerside/upload/";
+// const UPLOAD_URL = "http://localhost:8000/customerside/upload/";
 
 axios.defaults.withCredentials = true;
 
@@ -69,6 +69,39 @@ export const dashboardOverview = async () => {
     return response.data;
   } catch (error) {
     console.error("Dashboard Overview Fetch Error:", error);
+    return null;
+  }
+}
+
+export const fetchChartDataAPI = async (filterType) => {
+  try {
+    const res = await axios.get(`${API_URL}chart-data/?filter=${filterType}`, {
+      withCredentials: true, // Ensure cookies are sent
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Chart Data Fetch Error:", error);
+    return null;
+  }
+};
+
+export const fetchOrdersAPI = async (search, status, from, to, page, per_page) => {
+  try {
+    const response = await axios.get(`${API_URL}filter-orders/`, {
+      params: {
+        search,
+        status,
+        from,
+        to,
+        page,
+        per_page
+      },
+      withCredentials: true, // Ensure cookies are sent
+    });
+    return response.data;
+  }
+  catch (error) {
+    console.error("Orders Fetch Error:", error);
     return null;
   }
 }

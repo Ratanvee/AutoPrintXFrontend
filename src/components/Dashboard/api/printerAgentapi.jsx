@@ -18,7 +18,7 @@ export const checkPrinterAgentStatus = async () => {
     try {
         const response = await fetch(`${PRINTER_AGENT_URL}/status`);
         const data = await response.json();
-        return data.status === "online";
+        return data;
     } catch {
         return false;
     }
@@ -50,25 +50,5 @@ export const printDocument = async (fileUrl, order_id, printerName, colorMode = 
     } catch (error) {
         console.error("❌ Print Error:", error);
         return { error: error.message };
-    }
-};
-
-
-// Fetch connected printers
-export const fetchPrinters = async () => {
-    setLoading(true);
-    try {
-        const response = await fetch(`${PRINTER_AGENT_URL}/printers`);
-        const data = await response.json();
-        if (data.printers && Array.isArray(data.printers)) {
-            setPrinters(data.printers);
-        } else {
-            setPrinters([]);
-        }
-    } catch (error) {
-        console.error("Error fetching printers:", error);
-        setPrinters([]);
-    } finally {
-        setLoading(false);
     }
 };
