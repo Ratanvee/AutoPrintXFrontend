@@ -125,7 +125,8 @@ import MainSignInUpPage from "./pages/MainSignInUpPage";
 import DashboardLayout from "./pages/DashboardLayout";
 import { AuthProvider } from "./contexts/useAuth";
 import PrivateRoute from "./components/private_route";
-import PrintOrderForm from "./pages/UploadPage"
+import PrintOrderForm from "./pages/UploadPage";
+import { Toaster } from 'react-hot-toast';
 /**
  * Dynamically sets a CSS class on the body element
  * based on the current route
@@ -170,6 +171,7 @@ function App() {
           <Route path="*" element={<h2>404 - Page Not Found</h2>} />
         </Routes>
       </AuthProvider>
+      <Toaster position="top-center" />
 
     </Router>
   );

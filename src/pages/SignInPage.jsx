@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api/endpoints";
 // import { AuthContext } from "../contexts/useAuth";
 import { useAuth } from "../contexts/useAuth";
-
+import toast from 'react-hot-toast'; // <--- MUST BE HERE
 
 function SignInForm() {
 
@@ -31,7 +31,8 @@ function SignInForm() {
             nav("/dashboard");
         } else {
             // Handle login failure (e.g., show error message)
-            setErrorMessage('Incorrect username or password');
+            toast.error('Incorrect username or password');
+            // setErrorMessage('Incorrect username or password');
             console.log("Login failed");
         }
         // setErrorMessage('Incorrect username or password');

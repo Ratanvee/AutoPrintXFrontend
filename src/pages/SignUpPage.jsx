@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
 import { SignUpAPI } from '../api/endpoints'
+import toast from 'react-hot-toast'; // <--- MUST BE HERE
+
 function SignUpForm() {
   const [state, setState] = useState({
     name: "",
@@ -46,47 +48,14 @@ function SignUpForm() {
     setLoading(true);
 
     try {
-      // const response = await axios.post(
-      //   "http://127.0.0.1:8000/api/register/",
-      //   {
-      //     username: state.name,
-      //     email: state.email,
-      //     password: state.password,
-      //   },
-      //   {
-      //     headers: { "Content-Type": "application/json" },
-      //     withCredentials: true, // ✅ ensures cookie handling works
-      //   }
-      // );
-
-
-      // if (response.data.success) {
-      //   alert("Registration successful! Please sign in.");
-      //   setState({ name: "", email: "", password: "" });
-      // } else {
-      //   alert("Error: " + JSON.stringify(response.data.errors));
-      // }
       const data = await SignUpAPI(state.name, state.email, state.password)
       if (data.success) {
-        alert("Registration successful! Please sign in.");
+        // alert("Registration successful! Please sign in.");
+        toast.success("Registration Successful! Please sign in.",{ duration: 5000 });
         setState({ name: "", email: "", password: "" });
-      }
-      // else {
-      //   alert('somthing is wrong.....');
-      // }
-      else {
-        alert("Error: " + JSON.stringify(data.errors));
       }
     } catch (error) {
       console.error("Registration error:", error);
-
-      if (error.response) {
-        alert("Server Error: " + JSON.stringify(error.response.data));
-      } else if (error.request) {
-        alert("No response from server. Make sure backend is running!");
-      } else {
-        alert("Error: " + error.message);
-      }
     } finally {
       setLoading(false);
     }

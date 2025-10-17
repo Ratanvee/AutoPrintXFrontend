@@ -52,8 +52,32 @@ export const login = async (username, password) => {
     }
 
   } catch (error) {
-    console.error("Login Error:", error.response?.data || error.message);
-    return false;
+    // 2. Handle Network/HTTP Errors (Server Offline, 4xx, 5xx)
+
+    let errorMessage = "An unknown error occurred. Try again later!";
+
+    // Check if the error is due to the server being completely offline (Network Error)
+    if (axios.isAxiosError(error) && !error.response) {
+      errorMessage = "Connection Failed: The server is offline or unreachable.";
+      // If offline, use a persistent toast
+      toast.error(errorMessage, {
+        duration: 5000, // Keeps the toast visible
+        position: 'top-center'
+      });
+
+      // Check for specific HTTP status codes (e.g., 404, 500)
+    } else if (error.response) {
+      // Use the status code or the error message from the server response
+      const status = error.response.status;
+      errorMessage = `Request failed: HTTP ${status} - ${error.response.data.detail || 'Server error'}`;
+      toast.error(errorMessage, { duration: 5000 });
+    } else {
+      // Other errors (e.g., request setup failed)
+      toast.error(errorMessage, { duration: 5000 });
+    }
+
+    // Return the error object or null so the calling function can handle the failure
+    return null; // or throw error;
   }
 };
 
@@ -73,9 +97,32 @@ export const SignUpAPI = async(username, email, password) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Register Error:", error);
-    // alert('Somthing is wrong : ',error)
-    return response.errors;
+    // 2. Handle Network/HTTP Errors (Server Offline, 4xx, 5xx)
+
+    let errorMessage = "An unknown error occurred. Try again later!";
+
+    // Check if the error is due to the server being completely offline (Network Error)
+    if (axios.isAxiosError(error) && !error.response) {
+      errorMessage = "Connection Failed: The server is offline or unreachable.";
+      // If offline, use a persistent toast
+      toast.error(errorMessage, {
+        duration: 5000, // Keeps the toast visible
+        position: 'top-center'
+      });
+
+      // Check for specific HTTP status codes (e.g., 404, 500)
+    } else if (error.response) {
+      // Use the status code or the error message from the server response
+      const status = error.response.status;
+      errorMessage = `Request failed: HTTP ${status} - ${error.response.data.detail || 'Server error'}`;
+      toast.error(errorMessage, { duration: 5000 });
+    } else {
+      // Other errors (e.g., request setup failed)
+      toast.error(errorMessage, { duration: 5000 });
+    }
+
+    // Return the error object or null so the calling function can handle the failure
+    return null; // or throw error;
   }
 };
 
@@ -165,18 +212,65 @@ export const is_authenticated = async () => {
   }
 };
 
-export const UserToUploadDataAPI = async(uniqueUrl) => {
-  try{
+// export const UserToUploadDataAPI = async(uniqueUrl) => {
+//   try{
+//     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, { withCredentials: true });
+//     console.log("This is data user : ", response)
+//     if (response.data.error){
+//       alert(response.data.error)
+//     }
+//     return response.data;
+//   } catch (error) {
+//     // console.log("Somthing Whent Wrong..")
+//     // alert("Somthing went Wrong... Try again later!!")
+//     return error;
+//   }
+// }
+// import axios from 'axios';
+import toast from 'react-hot-toast'; // 👈 Import the toast function
+
+export const UserToUploadDataAPI = async (uniqueUrl) => {
+  try {
     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, { withCredentials: true });
-    console.log("This is data user : ", response)
-    if (response.data.error){
-      alert(response.data.error)
+
+    console.log("This is data user : ", response);
+
+    // 1. Handle Application-Level Errors (Django returned a 200, but included an error field)
+    if (response.data.error) {
+      // alert(response.data.error); // Replace alert with toast
+      toast.error(response.data.error);
+      // Optionally, return null or throw an error here if you don't want to return the partial data
     }
-    return true;
+
+    return response.data;
+
   } catch (error) {
-    console.log("Somthing Whent Wrong..")
-    alter("Somthing went Wrong... Try again later!!")
-    return false;
+    // 2. Handle Network/HTTP Errors (Server Offline, 4xx, 5xx)
+
+    let errorMessage = "An unknown error occurred. Try again later!";
+
+    // Check if the error is due to the server being completely offline (Network Error)
+    if (axios.isAxiosError(error) && !error.response) {
+      errorMessage = "🔴 Connection Failed: The server is offline or unreachable.";
+      // If offline, use a persistent toast
+      toast.error(errorMessage, {
+        duration: Infinity, // Keeps the toast visible
+        position: 'top-center'
+      });
+
+      // Check for specific HTTP status codes (e.g., 404, 500)
+    } else if (error.response) {
+      // Use the status code or the error message from the server response
+      const status = error.response.status;
+      errorMessage = `Request failed: HTTP ${status} - ${error.response.data.detail || 'Server error'}`;
+      toast.error(errorMessage);
+    } else {
+      // Other errors (e.g., request setup failed)
+      toast.error(errorMessage);
+    }
+
+    // Return the error object or null so the calling function can handle the failure
+    return null; // or throw error;
   }
 }
 

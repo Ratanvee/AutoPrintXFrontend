@@ -15,7 +15,6 @@ import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf.mjs";
 import { UploadDataAPI, CreateOrdersRazorpay, UserToUploadDataAPI } from '../api/endpoints'
 
-
 GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.mjs",
   import.meta.url
@@ -270,14 +269,16 @@ export default function PrintOrderForm() {
     rzp.open();
   };
 
-  // const knowUser = 
+  const KnowUser = async (uniqueUrl) => {
+    const response = await UserToUploadDataAPI(uniqueUrl)
+  }
 
   // ✅ Whenever uploadedFiles or printOptions change, recalculate amount
   useEffect(() => {
     document.title = 'AutoPrintX | Upload & Print';
     const uniqueUrl = location.pathname.split('/').pop();
-    setuniqueUrl(uniqueUrl)
-    UserToUploadDataAPI(uniqueUrl)
+    setuniqueUrl(uniqueUrl);
+    KnowUser(uniqueUrl);
     const total = calculateTotal();
     setAmount(total);
   }, [uploadedFiles, printOptions]);
