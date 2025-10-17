@@ -1,7 +1,8 @@
 
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/api/";
+// const API_URL = "http://127.0.0.1:8000/api/";
+const API_URL = import.meta.env.VITE_BaseURL;
 // const API_URL = "http://localhost:8000/api/";
 const LOGIN_URL = `${API_URL}token/`;
 const REFRESH_URL = `${API_URL}token/refresh/`;

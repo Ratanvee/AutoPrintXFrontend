@@ -1,10 +1,13 @@
 // PrinterAgentAPI.js
-const PRINTER_AGENT_URL = "http://localhost:5050"; // Flask local agent URL
+const PRINTER_AGENT_URL = import.meta.env.VITE_PrinterAgentURL; // Flask local agent URL
+const GetPrinterURL = `${PRINTER_AGENT_URL}/printers`
+const PrinterStatusURL = `${PRINTER_AGENT_URL}/status`
+const PrintOutsURL = `${PRINTER_AGENT_URL}/print`
 
 // 🖨️ 1. Fetch list of connected printers
 export const getPrinters = async () => {
     try {
-        const response = await fetch(`${PRINTER_AGENT_URL}/printers`);
+        const response = await fetch(GetPrinterURL);
         const data = await response.json();
         return data.printers || [];
     } catch (error) {
@@ -16,7 +19,7 @@ export const getPrinters = async () => {
 // 🟢 2. Check if the printer agent is online
 export const checkPrinterAgentStatus = async () => {
     try {
-        const response = await fetch(`${PRINTER_AGENT_URL}/status`);
+        const response = await fetch(PrinterStatusURL);
         const data = await response.json();
         return data;
     } catch {
@@ -25,9 +28,9 @@ export const checkPrinterAgentStatus = async () => {
 };
 
 // 🧾 3. Send print request to printer agent
-export const printDocument = async (fileUrl, order_id, printerName, colorMode = "Color") => {
+export const printDocument = async (fileUrl, order_id, printerName, colorMode) => {
     try {
-        const response = await fetch(`${PRINTER_AGENT_URL}/print`, {
+        const response = await fetch(PrintOutsURL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

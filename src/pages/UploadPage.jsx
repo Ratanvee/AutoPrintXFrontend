@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 import CurrencyInput from 'react-currency-input-field';
 import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf.mjs";
-import { UploadDataAPI, CreateOrdersRazorpay } from '../api/endpoints'
+import { UploadDataAPI, CreateOrdersRazorpay, UserToUploadDataAPI } from '../api/endpoints'
 
 
 GlobalWorkerOptions.workerSrc = new URL(
@@ -77,6 +77,8 @@ export default function PrintOrderForm() {
 
   // console.log("this is total price : ", calculateTotal())
 
+  const [uniqueUrl, setuniqueUrl] = useState("")
+
 
   const handleFinalSubmit = async () => {
     setLoading(true);
@@ -119,7 +121,7 @@ export default function PrintOrderForm() {
       }
 
       // Generate a unique URL slug from location pathname
-      const uniqueUrl = location.pathname.split('/').pop();
+     
 
       // const response = await axios.post(`http://127.0.0.1:8000/api/upload/${uniqueUrl}/`, formData, {
       //   withCredentials: true,
@@ -240,21 +242,17 @@ export default function PrintOrderForm() {
 
   const handlePayment = async (e) => {
     e.preventDefault();
-
-    // 1. Call backend to create order
-    // const response = await fetch("http://localhost:8000/api/create-order/", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ amount }),
-    // });
-    // const order = await response.json();
     const order = await CreateOrdersRazorpay(JSON.stringify({amount}))
+    // if (!order) {
+    //   alert("Server is not working ... Please Try again later")
+    //   return 
+    // }
 
     // 2. Open Razorpay UI
     const options = {
       key: import.meta.env.VITE_RazorPay_Key,
-      amount: order.amount, // already in paise from backend
-      currency: order.currency,
+      amount: order.amount || amount*100, // already in paise from backend
+      currency: order.currency || "INR",
       name: "PrintEase",
       description: "Test Transaction",
       order_id: order.id,
@@ -272,10 +270,14 @@ export default function PrintOrderForm() {
     rzp.open();
   };
 
+  // const knowUser = 
+
   // ✅ Whenever uploadedFiles or printOptions change, recalculate amount
   useEffect(() => {
     document.title = 'AutoPrintX | Upload & Print';
-
+    const uniqueUrl = location.pathname.split('/').pop();
+    setuniqueUrl(uniqueUrl)
+    UserToUploadDataAPI(uniqueUrl)
     const total = calculateTotal();
     setAmount(total);
   }, [uploadedFiles, printOptions]);

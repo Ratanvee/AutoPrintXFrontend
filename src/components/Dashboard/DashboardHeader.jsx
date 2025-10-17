@@ -88,8 +88,9 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   const [message, setMessage] = useState('');
 
   // ✅ The specific File ID extracted from your provided URL
-  const GOOGLE_DRIVE_FILE_ID = "1cKv4f-tmtZ8rCsp5Wb-59kjpUdSPE38u";
+  const GOOGLE_DRIVE_FILE_ID = import.meta.env.VITE_GOOGLE_DRIVE_FILE_ID;
   const FILENAME = "mysetup.exe"; // The target file name
+  const File_download_Link = import.meta.env.VITE_Google_drive_download_link;
 
   // The core function to initiate the download
   const handleDownload = () => {
@@ -98,7 +99,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
 
     // 1. Construct the Google Drive direct download URL.
     // The 'uc?export=download' format forces a direct file download.
-    const downloadUrl = `https://drive.google.com/uc?export=download&id=${GOOGLE_DRIVE_FILE_ID}`;
+    const downloadUrl = `${File_download_Link}${GOOGLE_DRIVE_FILE_ID}`;
 
     try {
       // 2. Create a temporary anchor element (<a>)

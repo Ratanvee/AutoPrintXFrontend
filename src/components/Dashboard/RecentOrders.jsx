@@ -443,6 +443,7 @@ const RecentOrders = ({ selectedPrinter }) => {
         setAutoPrint(false)
         return
       }
+      console.log("these are oreder : ", orders)
 
       // Filter first 5 pending orders that have not been auto-printed yet
       const pendingOrders = orders
@@ -451,7 +452,7 @@ const RecentOrders = ({ selectedPrinter }) => {
 
       pendingOrders.forEach(async (order) => {
         try {
-          const response = await printDocument(order.file_url, order.id, printerName, order.color_mode || "Color")
+          const response = await printDocument(order.file_url, order.id, printerName, order.print_color)
           if (response.message) {
             console.log(`✅ Auto Printed: Order ID ${order.id}`)
             setAutoPrintedOrders((prev) => [...prev, order.id])
@@ -494,13 +495,13 @@ const RecentOrders = ({ selectedPrinter }) => {
     }
   }
 
-  const handlePrint = async (fileUrl, order_id, printType) => {
+  const handlePrint = async (fileUrl, order_id, printColor) => {
     const printerName = getSelectedPrinter()
     if (!printerName) {
       alert("⚠️ Please select a printer first.")
       return
     }
-    const response = await printDocument(fileUrl, order_id, printerName, printType)
+    const response = await printDocument(fileUrl, order_id, printerName, printColor)
     if (response.message) {
       alert(`✅ Printed successfully on ${printerName}, Order ID: ${order_id}`)
     } else {
@@ -533,7 +534,7 @@ const RecentOrders = ({ selectedPrinter }) => {
         <div>
           <h3>Recent Orders</h3>
         </div>
-          <p>{filteredOrders.length} orders found</p>
+        <p>{filteredOrders.length} orders found</p>
         <div>
           <label className="switch">
             <input type="checkbox" checked={autoPrint} onChange={(e) => setAutoPrint(e.target.checked)} />
@@ -641,7 +642,7 @@ const RecentOrders = ({ selectedPrinter }) => {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       title="Print Order"
-                      onClick={() => handlePrint(order.file_url, order.id, order.color_mode || "Color")}
+                      onClick={() => handlePrint(order.file_url, order.id, order.print_color)}
                     >
                       <Printer size={16} />
                     </motion.button>

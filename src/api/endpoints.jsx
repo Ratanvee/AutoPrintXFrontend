@@ -1,95 +1,15 @@
-// import axios from "axios";
-
-// const API_URL = "http://127.0.0.1:8000/api/";
-// const LOGIN_URL = `${API_URL}token/`;
-// const REFRESH_URL = `${API_URL}token/refresh/`;
-// const NOTES_URL = `${API_URL}notes/`;
-// const LOGOUT_URL = `${API_URL}logout/`;
-// const AUTH_URL = `${API_URL}auth/`;
-
-// export const login = async (username, password) => {
-//     const response = await axios.post(LOGIN_URL,
-//         { username: username, password: password },
-//         { withCredentials: true }
-
-//     )
-//     return response.data.success
-// }
-
-// export const refreshToken = () => {
-//     try {
-//         const response = axios.post(REFRESH_URL,
-//             {},
-//             { withCredentials: true }
-//         )
-//         return true
-//     } catch (error) {
-//         return false
-//     }
-// }
-
-
-// export const get_notes = async () => {
-//     try {
-//         const response = await axios.get(NOTES_URL,
-//             { withCredentials: true }
-//         )
-//         return response.data
-
-//     } catch (error) {
-//         return call_refresh(error, axios.get(NOTES_URL, { withCredentials: true }))
-//     }
-// }
-
-// const call_refresh = async (error, func) => {
-//     if (error.response && error.response.status === 401) {
-//         const refresh_response = await refreshToken();
-//         if (refresh_response) {
-//             const retry_response = await func();
-//             return retry_response.data
-//         }
-//     }
-// }
-
-
-// export const logout = async () => {
-//     try {
-//         await axios.post(LOGOUT_URL,
-//             {},
-//             { withCredentials: true }
-//         )
-//         return true
-//     } catch (error) {
-//         return false
-//     }
-// }
-
-
-// export const is_authenticated = async () => {
-//     try {
-//         await axios.post(AUTH_URL,
-//             {},
-//             { withCredentials: true }
-//         )
-//         return true 
-//     } catch (error) {
-//         return false
-//     }
-
-// }
 
 
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/api/";
-// const API_URL = "http://localhost:8000/api/";
+// const API_URL = "http://127.0.0.1:8000/api/";
+const API_URL = import.meta.env.VITE_BaseURL;
 const LOGIN_URL = `${API_URL}token/`;
 const REFRESH_URL = `${API_URL}token/refresh/`;
 const NOTES_URL = `${API_URL}notes/`;
 const LOGOUT_URL = `${API_URL}logout/`;
 const AUTH_URL = `${API_URL}auth/`;
 const DASHBOARD_URL = `${API_URL}dashboards/`;
-// const UPLOAD_URL = "http://localhost:8000/api/uploadss/";
 const UPLOAD_URL = `${API_URL}upload/`
 const CREATEORDERS_URL = `${API_URL}create-order/`
 const SIGNUP_URL = `${API_URL}register/`
@@ -244,6 +164,21 @@ export const is_authenticated = async () => {
     return false;
   }
 };
+
+export const UserToUploadDataAPI = async(uniqueUrl) => {
+  try{
+    const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, { withCredentials: true });
+    console.log("This is data user : ", response)
+    if (response.data.error){
+      alert(response.data.error)
+    }
+    return true;
+  } catch (error) {
+    console.log("Somthing Whent Wrong..")
+    alter("Somthing went Wrong... Try again later!!")
+    return false;
+  }
+}
 
 
 export const UploadDataAPI = async (data, uniqueUrl) => {

@@ -44,8 +44,9 @@ const Dashboard = () => {
     // const fetchData = async () => {
     //   const data = await get_dashboard();
     //   setDashboardData(data);
-      document.title = 'AutoPrintX | Dashboard';
-    });
+    document.title = 'AutoPrintX | Dashboard';
+    // console.log("this is base url : ", import.meta.env.VITE_BaseURL)
+  });
 
   //   fetchData();
   // }, [get_dashboard]);
