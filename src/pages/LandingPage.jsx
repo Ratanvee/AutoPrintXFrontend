@@ -73,6 +73,10 @@ const LandingPage = () => {
             },
         },
     }
+    const [isActive, setIsActive] = useState(false);
+    const toggleMenu = () => {
+        setIsActive(!isActive);
+    };
     return (
         <div>
             <motion.header initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
@@ -83,21 +87,28 @@ const LandingPage = () => {
                         transition={{ duration: 0.5 }}>
                         <h1>Smart<span>DocX</span></h1>
                     </motion.div>
-                    <ul className="nav-links">
+                    <ul className={`nav-links ${isActive ? "active" : ""}`}>
                         <li><a href="/" className="active">Home</a></li>
                         <li><a href="#services">Services</a></li>
                         <li><a href="#about">About</a></li>
                         <li><a href="#contact">Contact</a></li>
                         <li><a href="/login" className="dashboard btn-secondary">Dashboard</a></li>
                     </ul>
+                    <div className={`hamburger ${isActive ? "active" : ""}`}
+                        onClick={toggleMenu}
+                    >
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
                 </nav>
             </motion.header>
-           
+
 
             <main>
                 <section className="hero">
                     <div className="hero-content">
-                        
+
                         <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                             <h1>Smart Document Printing Solutions</h1>
                             <p>Fast, reliable, and high-quality printing services for all your document needs</p>
@@ -111,20 +122,20 @@ const LandingPage = () => {
                                     Our Services
                                 </motion.a>
                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                    
+
                                     <motion.a
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        href="/exitstingshops" 
+                                        href="/exitstingshops"
                                         className="btn-secondary"
-                                        >
-                                            Order Now
-                                        </motion.a>
+                                    >
+                                        Order Now
+                                    </motion.a>
                                 </motion.div>
                             </div>
                         </motion.div>
                     </div>
-                   
+
                     <motion.div
                         className="hero-image"
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -135,7 +146,7 @@ const LandingPage = () => {
                     </motion.div>
                 </section>
 
-             
+
                 {/* Features Section */}
                 <section className="features" id="services">
                     <motion.h2 className="section-title" {...fadeInUp}>
@@ -186,7 +197,7 @@ const LandingPage = () => {
                     </motion.div>
                 </section>
 
-               
+
                 {/* How It Works Section */}
                 <section className="how-it-works">
                     <motion.h2 className="section-title" {...fadeInUp}>
@@ -216,7 +227,7 @@ const LandingPage = () => {
                     </motion.div>
                 </section>
 
-              
+
                 {/* Pricing Section */}
                 <section className="pricing">
                     <motion.h2 className="section-title" {...fadeInUp}>
@@ -281,7 +292,7 @@ const LandingPage = () => {
                     </motion.div>
                 </section>
 
-               
+
                 {/* Testimonials Section */}
                 <section className="testimonials" id="about">
                     <motion.h2 className="section-title" {...fadeInUp}>
@@ -327,7 +338,7 @@ const LandingPage = () => {
                     </div>
                 </section>
 
-              
+
                 {/* Contact Section */}
                 <section className="contact" id="contact">
                     <motion.h2 className="section-title" {...fadeInUp}>
