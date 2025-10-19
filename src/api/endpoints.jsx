@@ -3,7 +3,7 @@
 import axios from "axios";
 
 // const API_URL = "http://127.0.0.1:8000/api/";
-const API_URL = import.meta.env.VITE_BaseURL;
+const API_URL = import.meta.env.VITE_BaseURL1 ;
 const LOGIN_URL = `${API_URL}token/`;
 const REFRESH_URL = `${API_URL}token/refresh/`;
 const NOTES_URL = `${API_URL}notes/`;
@@ -44,6 +44,8 @@ export const login = async (username, password) => {
     });
 
     if (response.data.success) {
+      console.log("Access Token : ", response.data.AccessToken)
+      console.log("Access Token : ", response.data.RefreshToken)
       return true;
     } else {
       // console.error('Login failed:', response.data.error);
@@ -136,6 +138,7 @@ export const refreshToken = async () => {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       }
     );
     return true;
@@ -147,10 +150,10 @@ export const refreshToken = async () => {
 
 export const get_notes = async () => {
   try {
-    const response = await axios.get(NOTES_URL);
+    const response = await axios.get(NOTES_URL, { withCredentials: true, });
     return response.data;
   } catch (error) {
-    return call_refresh(error, () => axios.get(NOTES_URL));
+    return call_refresh(error, () => axios.get(NOTES_URL, { withCredentials: true, }));
   }
 };
 
@@ -173,6 +176,7 @@ export const logout = async () => {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       }
     );
     return true;
@@ -182,35 +186,36 @@ export const logout = async () => {
   }
 };
 
+export const is_authenticated = async () => {
+  console.log("Checking authentication status..................");
+  try {
+    await axios.post(
+      AUTH_URL,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return true;
+  } catch (error) {
+    console.error("Auth Check Error:", error);
+    return false;
+  }
+};
+
 // export const is_authenticated = async () => {
+//   console.log("Checking authentication status..................");
 //   try {
-//     await axios.post(
-//       AUTH_URL,
-//       {},
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
+//     await axios.get(AUTH_URL, { withCredentials: true, credentials: 'include' });
+//     console.log("User is authenticated.");
 //     return true;
 //   } catch (error) {
 //     console.error("Auth Check Error:", error);
 //     return false;
 //   }
 // };
-
-export const is_authenticated = async () => {
-  console.log("Checking authentication status..................");
-  try {
-    await axios.get(AUTH_URL, { withCredentials: true });
-    console.log("User is authenticated.");
-    return true;
-  } catch (error) {
-    // console.error("Auth Check Error:", error);
-    return false;
-  }
-};
 
 // export const UserToUploadDataAPI = async(uniqueUrl) => {
 //   try{
@@ -294,6 +299,7 @@ export const CreateOrdersRazorpay = async (data) => {
     const response = await fetch(CREATEORDERS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      withCredentials: true,
       body: data,
     });
     return response.json();

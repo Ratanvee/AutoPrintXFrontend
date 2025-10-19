@@ -2,7 +2,7 @@
 import axios from "axios";
 import toast from 'react-hot-toast'; // 👈 Import the toast function
 // const API_URL = "http://127.0.0.1:8000/api/";
-const API_URL = import.meta.env.VITE_BaseURL;
+const API_URL = import.meta.env.VITE_BaseURL1;
 const LOGOUT_URL = `${API_URL}logout/`;
 const DASHBOARD_URL = `${API_URL}dashboards/`;
 const RECENTORDERS = `${API_URL}recent-orders/`;
@@ -66,6 +66,7 @@ export const logout = async () => {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       }
     );
     return true;
