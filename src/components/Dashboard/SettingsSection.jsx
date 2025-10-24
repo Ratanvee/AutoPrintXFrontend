@@ -274,7 +274,7 @@ const SettingsSection = () => {
                     Update Profile
                   </motion.button>
                 </form>
-                <SmartDocXPoster value={`https://auto-print-x-luxl.vercel.app/upload/${QRData.user.unique_url}`} ownerName={QRData.user.username} />
+                <SmartDocXPoster value={`${import.meta.env.VITE_BaseURL1}${QRData.user.unique_url}`} ownerName={QRData.user.username} />
               </motion.div>
             )}
 
