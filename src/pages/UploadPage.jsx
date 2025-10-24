@@ -155,6 +155,49 @@ export default function PrintOrderForm() {
 
 
 
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   // accept all documents and images
+  //   accept: {
+  //     "application/pdf": [".pdf"],
+  //     "application/msword": [".doc"],
+  //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+  //     "image/*": [".png", ".jpg", ".jpeg"],
+  //   },
+  //   onDrop: async (acceptedFiles) => {
+  //     const newFiles = await Promise.all(
+  //       acceptedFiles.map(async (file) => {
+  //         let pageCount = null;
+
+  //         if (file.type === "application/pdf") {
+  //           try {
+  //             const pdfData = await file.arrayBuffer();
+  //             const pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+  //             pageCount = pdfDoc.numPages;
+  //             setPages(pageCount)
+  //           } catch (err) {
+  //             console.error("Error reading PDF:", err);
+  //             pageCount = null;
+  //           }
+  //         } else {
+  //           // For Word/Images just mark as unknown (no conversion now)
+  //           pageCount = null;
+  //         }
+
+  //         return {
+  //           id: Date.now() + Math.random(),
+  //           file,
+  //           name: file.name,
+  //           size: file.size,
+  //           type: file.type,
+  //           pages: pageCount,
+  //         };
+  //       })
+  //     );
+
+  //     setUploadedFiles((prev) => [...prev, ...newFiles]);
+  //   },
+  // });
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     // accept all documents and images
     accept: {
@@ -167,20 +210,37 @@ export default function PrintOrderForm() {
       const newFiles = await Promise.all(
         acceptedFiles.map(async (file) => {
           let pageCount = null;
+          let fileType = file.type; // Original MIME type
 
-          if (file.type === "application/pdf") {
+          // 1. Handle Images: Set page count to 1
+          if (fileType.startsWith("image/")) {
+            pageCount = 1;
+
+            // 2. Handle PDFs: Calculate page count using pdfjsLib
+          } else if (fileType === "application/pdf") {
             try {
+              // Ensure pdfjsLib is correctly loaded/available
               const pdfData = await file.arrayBuffer();
               const pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
               pageCount = pdfDoc.numPages;
-              setPages(pageCount)
+              setPages(pageCount) // Assuming setPages is meant to track total/last page count
             } catch (err) {
               console.error("Error reading PDF:", err);
               pageCount = null;
             }
+
+            // 3. Handle Word/Other Docs: Requires Server/External Library for Conversion
           } else {
-            // For Word/Images just mark as unknown (no conversion now)
-            pageCount = null;
+            // *** IMPORTANT: Word to PDF conversion is NOT possible reliably in client-side JS. ***
+            // You need a backend service (e.g., using libraries like LibreOffice, unoconv, or a cloud API)
+            // to convert .doc/.docx to PDF before page counting.
+
+            // OPTION A: Treat as single page (If conversion is not strictly needed for pricing)
+            // pageCount = 1; 
+
+            // OPTION B: Skip conversion and page count (As in original code, requires manual later)
+            console.warn(`File ${file.name} is a non-PDF document. Conversion to PDF required for page count.`);
+            pageCount = null; // Cannot determine page count without conversion
           }
 
           return {
@@ -188,8 +248,8 @@ export default function PrintOrderForm() {
             file,
             name: file.name,
             size: file.size,
-            type: file.type,
-            pages: pageCount,
+            type: fileType, // Use original type
+            pages: pageCount, // Will be 1 for image, N for PDF, or null for Word/Other
           };
         })
       );

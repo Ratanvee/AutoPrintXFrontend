@@ -153,10 +153,10 @@ const BodyClassController = () => {
 function App() {
   return (
     <Router>
-      <AuthProvider>
 
 
         <BodyClassController />
+      <AuthProvider>
         <Routes>
 
           {/* ✅ Public Routes */}
