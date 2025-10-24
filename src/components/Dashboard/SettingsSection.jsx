@@ -6,6 +6,8 @@ import { User, Building, Shield, Bell, CreditCard, Save, Camera, Eye, EyeOff } f
 // import QRCode from "react-qr-code"
 import SmartDocXPoster from './QRCodeGenerator'
 import { get_dashboard } from "./api/endpoints";
+import { getQRData } from "../../global"
+
 const SettingsSection = () => {
   const [activeTab, setActiveTab] = useState("general")
   const [showPassword, setShowPassword] = useState(false)
@@ -274,7 +276,7 @@ const SettingsSection = () => {
                     Update Profile
                   </motion.button>
                 </form>
-                <SmartDocXPoster value={`${import.meta.env.VITE_BaseURL1}${QRData.user.unique_url}`} ownerName={QRData.user.username} />
+                <SmartDocXPoster value={`${import.meta.env.VITE_BaseURL1}${getQRData().unique_url}`} ownerName={getQRData().username} />
               </motion.div>
             )}
 

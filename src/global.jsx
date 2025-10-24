@@ -6,3 +6,11 @@ export const setSelectedPrinterr = (printer) => {
 };
 
 export const getSelectedPrinter = () => selectedPrinter;
+
+// Global variable for QR Data (not reactive)
+let QRData = {};
+export const setQRData = (data) => {
+    QRData = data;
+};
+
+export const getQRData = () => QRData;

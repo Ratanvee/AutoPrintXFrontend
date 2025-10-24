@@ -6,6 +6,7 @@ import { get_dashboard, logout } from "./api/endpoints";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { setQRData } from "../../global";
 
 
 
@@ -29,6 +30,7 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
     const fetchData = async () => {
       const data = await get_dashboard();
       setDashboardData(data);
+      setQRData(data.user);
     };
 
     fetchData();
