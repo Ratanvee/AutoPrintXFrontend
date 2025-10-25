@@ -52,7 +52,7 @@ const RecentOrders = ({ selectedPrinter }) => {
 
       pendingOrders.forEach(async (order) => {
         try {
-          const response = await printDocument(order.file_url, order.id, printerName, order.print_color)
+          const response = await printDocument(order.file_url, order.id, printerName, order.print_color, order.no_of_copies)
           if (response.message) {
             console.log(`✅ Auto Printed: Order ID ${order.id}`)
             setAutoPrintedOrders((prev) => [...prev, order.id])
@@ -95,13 +95,13 @@ const RecentOrders = ({ selectedPrinter }) => {
     }
   }
 
-  const handlePrint = async (fileUrl, order_id, printColor) => {
+  const handlePrint = async (fileUrl, order_id, printColor, no_of_copies) => {
     const printerName = getSelectedPrinter()
     if (!printerName) {
       alert("⚠️ Please select a printer first.")
       return
     }
-    const response = await printDocument(fileUrl, order_id, printerName, printColor)
+    const response = await printDocument(fileUrl, order_id, printerName, printColor, no_of_copies)
     if (response.message) {
       alert(`✅ Printed successfully on ${printerName}, Order ID: ${order_id}`)
     } else {
@@ -242,7 +242,7 @@ const RecentOrders = ({ selectedPrinter }) => {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       title="Print Order"
-                      onClick={() => handlePrint(order.file_url, order.id, order.print_color)}
+                      onClick={() => handlePrint(order.file_url, order.id, order.print_color, order.no_of_copies)}
                     >
                       <Printer size={16} />
                     </motion.button>

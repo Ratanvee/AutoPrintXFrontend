@@ -28,7 +28,7 @@ export const checkPrinterAgentStatus = async () => {
 };
 
 // 🧾 3. Send print request to printer agent
-export const printDocument = async (fileUrl, order_id, printerName, colorMode) => {
+export const printDocument = async (fileUrl, order_id, printerName, colorMode, NoOfCopies) => {
     try {
         const response = await fetch(PrintOutsURL, {
             method: "POST",
@@ -38,6 +38,7 @@ export const printDocument = async (fileUrl, order_id, printerName, colorMode) =
                 printer_name: printerName,
                 color_mode: colorMode,
                 order_id: order_id,
+                NoOfCopies: NoOfCopies
             }),
         });
 
