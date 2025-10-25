@@ -4,10 +4,10 @@ import React, { useRef, useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import html2canvas from "html2canvas";
 
-const SmartDocXPoster = ({
-    value = "https://smartdocx.com/pay",
+const AutoPrintXPoster = ({
+    value = "https://autoprintx.com/pay",
     ownerName = "RATANVEER",
-    logo = "/SmartDocXLogo.png",      // Place in public/
+    logo = "/AutoPrintXLogo.png",      // Place in public/
     lensLogo = "/google-lens.svg",     // Place in public/
 }) => {
     const qrRef = useRef(null);
@@ -45,7 +45,7 @@ const SmartDocXPoster = ({
         const dataURL = canvas.toDataURL("image/png");
         const link = document.createElement("a");
         link.href = dataURL;
-        link.download = `${ownerName}_SmartDocX_QR.png`;
+        link.download = `${ownerName}_AutoPrintX_QR.png`;
         link.click();
     };
 
@@ -91,10 +91,10 @@ const SmartDocXPoster = ({
                     ALL-IN-ONE QR
                 </div>
 
-                {/* SmartDocX Logo Text */}
+                {/* AutoPrintX Logo Text */}
                 <div style={{ fontSize: "40px", fontWeight: "bold", marginBottom: "5px" }}>
-                    <span style={{ color: "#003366" }}>Smart</span>
-                    <span style={{ color: "#007BFF" }}>DocX</span>
+                    <span style={{ color: "#003366" }}>Auto</span>
+                    <span style={{ color: "#007BFF" }}>PrintX</span>
                 </div>
                 <div style={{ fontSize: "16px", color: "#000", marginBottom: "20px", fontWeight: "bold" }}>
                     Accepted Here
@@ -177,4 +177,4 @@ const SmartDocXPoster = ({
     );
 };
 
-export default SmartDocXPoster;
+export default AutoPrintXPoster;

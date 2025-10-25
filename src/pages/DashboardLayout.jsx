@@ -85,7 +85,7 @@ const Dashboard = () => {
             <Route path="/customers" element={<CustomersManagement />} />
             <Route path="/products" element={<ProductsManagement />} />
             <Route path="/reports" element={<ReportsSection />} />
-            <Route path="/settings" element={<SettingsSection />} />
+            <Route path="/settings/*" element={<SettingsSection />} />
           </Routes>
         </motion.div>
       </main>
