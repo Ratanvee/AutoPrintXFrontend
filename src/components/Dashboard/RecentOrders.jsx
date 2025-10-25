@@ -6,7 +6,6 @@ import { Eye, Printer, MoreHorizontal, Search, Download } from "lucide-react"
 import { recentOrders } from "./api/endpoints"
 import { printDocument } from "./api/printerAgentapi"
 import { getSelectedPrinter } from "../../global"
-import { c } from "framer-motion/dist/types.d-Cjd591yU"
 
 const RecentOrders = ({ selectedPrinter }) => {
   const [orders, setOrders] = useState([])
@@ -52,11 +51,8 @@ const RecentOrders = ({ selectedPrinter }) => {
         .slice(0, 5)
 
       pendingOrders.forEach(async (order) => {
-        console.log("Auto printing order:", order)
         try {
           const response = await printDocument(order.file_url, order.id, printerName, order.print_color)
-          console.log("Auto print response:", response)
-          // handlePrint(order.file_url, order.id, order.print_color)
           if (response.message) {
             console.log(`✅ Auto Printed: Order ID ${order.id}`)
             setAutoPrintedOrders((prev) => [...prev, order.id])
