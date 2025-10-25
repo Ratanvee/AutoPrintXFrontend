@@ -276,7 +276,7 @@ const SettingsSection = () => {
                     Update Profile
                   </motion.button>
                 </form>
-                <SmartDocXPoster value={`${import.meta.env.VITE_BaseURL1}${getQRData().unique_url}`} ownerName={getQRData().username} />
+                <SmartDocXPoster value={`${import.meta.env.VITE_QRCodeURL}upload/${getQRData().unique_url}`} ownerName={getQRData().username} />
               </motion.div>
             )}
 
