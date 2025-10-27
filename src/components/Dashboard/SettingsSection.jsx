@@ -12,7 +12,7 @@ import SecuritySettings from "./settings/SecuritySettings"
 import NotificationsSettings from "./settings/NotificationsSettings"
 import BillingSettings from "./settings/BillingSettings"
 
-import { get_dashboard } from "./api/endpoints"
+import { get_dashboard, DashboardSettings, UpdateDashboardSettings, ChangePasswordAPI } from "./api/endpoints"
 
 const SettingsSection = () => {
   const navigate = useNavigate()
@@ -26,8 +26,8 @@ const SettingsSection = () => {
       email: "contact@autoprintx.com",
       phone: "+1 (555) 123-4567",
       address: "123 Printing Street, Document City",
-      currency: "USD",
-      timezone: "America/New_York",
+      currency: "INR",
+      timezone: "Asia/Kolkata",
     },
     profile: {
       fullName: "Admin User",
@@ -87,9 +87,56 @@ const SettingsSection = () => {
     }))
   }
 
+
+  // NEW STATE: Holds the temporary URL for the local image preview
+  const [localAvatarUrl, setLocalAvatarUrl] = useState(null); 
+
+  // --- NEW: Separate handler for file input ---
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+
+    // 1. Save the File object to state for API/DB upload
+    handleInputChange("profile", "avatar", file);
+
+    if (file) {
+      // 2. Revoke previous local URL to prevent memory leaks
+      if (localAvatarUrl) {
+        URL.revokeObjectURL(localAvatarUrl);
+      }
+      // 3. Create new local URL for preview and save it to state
+      const newUrl = URL.createObjectURL(file);
+      setLocalAvatarUrl(newUrl);
+    } else {
+      // If file is cleared
+      setLocalAvatarUrl(null);
+      handleInputChange("profile", "avatar", null);
+    }
+  };
+
   const handleSave = (section) => {
     console.log(`Saving ${section} settings:`, settings[section])
-    // Add your API call here
+    // console.log("This is general settings data: ", settings.general)
+    // console.log("This is profile settings data: ", settings.profile)
+    // console.log("This is security settings data: ", settings.security)
+    // console.log("This is notifications settings data: ", settings.notifications)
+    // console.log("This is billing settings data: ", settings.billing)
+
+    if (section === 'security') {
+
+      // const formData = new FormData();
+      // formData.append('section', section);
+      console.log("This is settings[section]: ", settings[section])
+      // Add your security-specific validation here
+      data = ChangePasswordAPI(settings[section])
+      console.log("Change Password API response: ", data)
+
+      
+    }
+    else {
+      // Add your API call here
+      UpdateDashboardSettings(section, settings[section])
+    }
+
   }
 
   const fetchDashboardData = async () => {
@@ -99,6 +146,7 @@ const SettingsSection = () => {
 
   useEffect(() => {
     fetchDashboardData()
+    DashboardSettings()
   }, [])
 
   return (
@@ -168,6 +216,9 @@ const SettingsSection = () => {
                     settings={settings}
                     handleInputChange={handleInputChange}
                     handleSave={handleSave}
+                    handleProfileImageChange={handleProfileImageChange}
+                    isSaving={false}  // You can replace this with actual saving state if needed
+                    localAvatarUrl={localAvatarUrl}
                   />
                 }
               />

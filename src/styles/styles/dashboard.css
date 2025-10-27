@@ -654,9 +654,17 @@
   color: #555;
 }
 
+/* .btn-icon-trash {
+  background-color: #7f0000;
+  color: #ffffff;
+}
+.btn-icon-trash:hover {
+  background-color: #f5c6cb;
+}
+
 .chart-actions .btn-icon:hover {
   background-color: #e0e2e5;
-}
+} */
 
 .chart-container {
   position: relative;
@@ -792,6 +800,22 @@
   cursor: pointer;
 }
 
+.status-filter {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #555;
+  cursor: pointer;
+}
+
+.recent-orders-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .table-responsive {
   overflow-x: auto;
 }
@@ -802,11 +826,19 @@
   font-size: 15px;
 }
 
+
+.changepss-eye-icon {
+  position: absolute;
+  right: 20px;
+  top: 23%;
+}
+
 .recent-orders th,
 .recent-orders td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
+  /* width: 200px; */
 }
 
 .recent-orders th {

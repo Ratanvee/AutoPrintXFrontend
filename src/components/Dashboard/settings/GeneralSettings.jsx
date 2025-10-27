@@ -56,9 +56,9 @@ const GeneralSettings = ({ settings, handleInputChange, handleSave }) => (
                         value={settings.general.currency}
                         onChange={(e) => handleInputChange("general", "currency", e.target.value)}
                     >
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="GBP">GBP (£)</option>
+                        <option value="INR">INR (₹)</option>
+                        {/* <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option> */}
                     </select>
                 </div>
                 <div className="form-group">
@@ -68,10 +68,7 @@ const GeneralSettings = ({ settings, handleInputChange, handleSave }) => (
                         value={settings.general.timezone}
                         onChange={(e) => handleInputChange("general", "timezone", e.target.value)}
                     >
-                        <option value="America/New_York">Eastern Time</option>
-                        <option value="America/Chicago">Central Time</option>
-                        <option value="America/Denver">Mountain Time</option>
-                        <option value="America/Los_Angeles">Pacific Time</option>
+                        <option value="Asia/Kolkata">India Standard Time</option>
                     </select>
                 </div>
             </div>

@@ -48,7 +48,7 @@
 
 .payment-main {
   flex: 1;
-  padding: 40px 20px;
+  padding: 10px 20px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -537,12 +537,39 @@
   cursor: not-allowed;
 }
 
+
+
+/*  Footer Styles  developer style */
+.footer-upload{
+  padding: 1rem 4rem;
+}
+.footer-about-developer {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  padding: 40px 0px;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.footer-bottom-upload{
+  margin-top: 0rem;
+}
+
+.footer-upload p{
+  padding-bottom: 0rem;
+}
+
 /* Responsive Adjustments for Payment Page */
 @media (max-width: 768px) {
   .payment-container {
     padding: 30px;
   }
 
+  .footer-about-developer{
+    flex-direction: column;
+    gap: 30px;
+  }
   .payment-header h1 {
     font-size: 28px;
   }

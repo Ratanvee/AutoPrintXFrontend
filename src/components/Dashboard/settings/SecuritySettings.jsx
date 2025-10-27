@@ -14,7 +14,7 @@ const SecuritySettings = ({ settings, handleInputChange, handleSave, showPasswor
         <form className="settings-form">
             <div className="form-group">
                 <label htmlFor="currentPassword">Current Password</label>
-                <div className="password-input">
+                {/* <div className="password-input">
                     <input
                         type={showPassword ? "text" : "password"}
                         id="currentPassword"
@@ -24,7 +24,20 @@ const SecuritySettings = ({ settings, handleInputChange, handleSave, showPasswor
                     <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
-                </div>
+                </div> */}
+                <input
+                    type={showPassword ? "text" : "password"}
+                    // className="snin-input"
+                    name="password"
+                    id="currentPassword"
+                    placeholder="Password"
+                    value={settings.security.currentPassword}
+                    onChange={(e) => handleInputChange("security", "currentPassword", e.target.value)}
+                    autoComplete="current-password"
+                />
+                <span className="changepss-eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
             </div>
             <div className="form-group">
                 <label htmlFor="newPassword">New Password</label>

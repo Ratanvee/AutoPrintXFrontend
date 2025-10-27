@@ -65,8 +65,10 @@
 
 import React, { useState, useEffect } from "react";
 import "../styles/SignInUp.css";
-import SignInForm from "../pages/SignInPage";
-import SignUpForm from "../pages/SignUpPage";
+import SignInForm from "../components/SingInUP/SignInPage";
+import SignUpForm from "../components/SingInUP/SignUpPage";
+// import StepConfirmation from "../components/UploadPage/steps/StepConfirmation";
+
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 const MainSignInUpPage = () => {

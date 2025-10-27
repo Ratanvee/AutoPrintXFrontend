@@ -127,6 +127,16 @@ import { AuthProvider } from "./contexts/useAuth";
 import PrivateRoute from "./components/private_route";
 import PrintOrderForm from "./pages/UploadPage";
 import { Toaster } from 'react-hot-toast';
+// import PrintOrderForm from "./pages/PrintOrderForm";
+
+// In your main.jsx or App.jsx
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+
+
+
 /**
  * Dynamically sets a CSS class on the body element
  * based on the current route
@@ -155,24 +165,29 @@ function App() {
     <Router>
 
 
+      <QueryClientProvider client={queryClient}>
         <BodyClassController />
-      <AuthProvider>
-        <Routes>
+        <AuthProvider>
+          <Routes>
 
-          {/* ✅ Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/*" element={<MainSignInUpPage />} />
-          <Route path="/upload/:slug" element={<PrintOrderForm />} />
+            {/* ✅ Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/*" element={<MainSignInUpPage />} />
+            <Route path="/upload/:slug" element={<PrintOrderForm />} />
 
-          {/* ✅ Protected Dashboard Routes */}
-          <Route path="/dashboard/*" element={<PrivateRoute> <DashboardLayout /></PrivateRoute>}></Route>
-          {/* <Route element={<PrivateRoute><Layout><Menu /></Layout></PrivateRoute>} path='/' /> */}
-          {/* ✅ Fallback for 404 */}
-          <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-        </Routes>
-      </AuthProvider>
-      <Toaster position="top-center" />
 
+            {/* ✅ Protected Dashboard Routes */}
+            <Route path="/dashboard/*" element={<PrivateRoute> <DashboardLayout /></PrivateRoute>}></Route>
+
+
+            {/* <Route element={<PrivateRoute><Layout><Menu /></Layout></PrivateRoute>} path='/' /> */}
+            {/* ✅ Fallback for 404 */}
+            <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+          </Routes>
+        </AuthProvider>
+        <Toaster position="top-center" />
+
+      </QueryClientProvider>
     </Router>
   );
 }

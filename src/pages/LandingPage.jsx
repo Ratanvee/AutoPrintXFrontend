@@ -33,13 +33,13 @@ const LandingPage = () => {
 
     const testimonials = [
         {
-            text: "SmartDocX delivered my thesis prints on time with excellent quality. Their service is outstanding!",
+            text: "AutoPrintX delivered my thesis prints on time with excellent quality. Their service is outstanding!",
             author: "John Doe",
             role: "University Student",
             rating: 5,
         },
         {
-            text: "As a business owner, I rely on SmartDocX for all my document printing needs. Fast, reliable, and professional.",
+            text: "As a business owner, I rely on AutoPrintX for all my document printing needs. Fast, reliable, and professional.",
             author: "Sarah Johnson",
             role: "Business Owner",
             rating: 5,
@@ -85,7 +85,7 @@ const LandingPage = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}>
-                        <h1>Smart<span>DocX</span></h1>
+                        <h1>Auto<span>PrintX</span></h1>
                     </motion.div>
                     <ul className={`nav-links ${isActive ? "active" : ""}`}>
                         <li><a href="/" className="active">Home</a></li>
@@ -142,7 +142,7 @@ const LandingPage = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <img src="https://placehold.co/600x400/0a2463/white?text=SmartDocX" alt="Document Printing" />
+                        <img src="https://placehold.co/600x400/0a2463/white?text=AutoPrintX" alt="Document Printing" />
                     </motion.div>
                 </section>
 
@@ -362,7 +362,7 @@ const LandingPage = () => {
                             </div>
                             <div className="contact-item">
                                 <Mail size={24} />
-                                <p>info@smartdocx.com</p>
+                                <p>info@autoprintx.com</p>
                             </div>
                             <div className="contact-item">
                                 <Clock size={24} />
@@ -437,7 +437,7 @@ const LandingPage = () => {
             <footer>
                 <div className="footer-container">
                     <div className="footer-logo">
-                        <h2>Smart<span>DocX</span></h2>
+                        <h2>Auto<span>PrintX</span></h2>
                         <p>Smart Document Printing Solutions</p>
                     </div>
                     <div className="footer-links">
@@ -473,7 +473,7 @@ const LandingPage = () => {
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    <p>&copy; 2025 SmartDocX. All Rights Reserved.</p>
+                    <p>&copy; 2025 AutoPrintX. All Rights Reserved.</p>
                 </div>
             </footer>
         </div>

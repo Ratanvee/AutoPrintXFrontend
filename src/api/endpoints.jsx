@@ -1,9 +1,10 @@
 
 
 import axios from "axios";
+// import { c } from "framer-motion/dist/types.d-Cjd591yU";
 
 // const API_URL = "http://127.0.0.1:8000/api/";
-const API_URL = import.meta.env.VITE_BaseURL1 ;
+const API_URL = import.meta.env.VITE_BaseURL1;
 const LOGIN_URL = `${API_URL}token/`;
 const REFRESH_URL = `${API_URL}token/refresh/`;
 const NOTES_URL = `${API_URL}notes/`;
@@ -13,6 +14,13 @@ const DASHBOARD_URL = `${API_URL}dashboards/`;
 const UPLOAD_URL = `${API_URL}upload/`
 const CREATEORDERS_URL = `${API_URL}create-order/`
 const SIGNUP_URL = `${API_URL}register/`
+const sendOTPURL = `${API_URL}send-otp/`;
+const verifyOTPURL = `${API_URL}verify-otp/`;
+const resetPasswordURL = `${API_URL}reset-password/`;
+
+
+
+
 axios.defaults.withCredentials = true;
 
 // export const login = async (username, password) => {
@@ -83,7 +91,7 @@ export const login = async (username, password) => {
   }
 };
 
-export const SignUpAPI = async(username, email, password) => {
+export const SignUpAPI = async (username, email, password) => {
   try {
     const response = await axios.post(
       SIGNUP_URL,
@@ -186,36 +194,36 @@ export const logout = async () => {
   }
 };
 
-export const is_authenticated = async () => {
-  console.log("Checking authentication status..................");
-  try {
-    await axios.post(
-      AUTH_URL,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return true;
-  } catch (error) {
-    console.error("Auth Check Error:", error);
-    return false;
-  }
-};
-
 // export const is_authenticated = async () => {
 //   console.log("Checking authentication status..................");
 //   try {
-//     await axios.get(AUTH_URL, { withCredentials: true, credentials: 'include' });
-//     console.log("User is authenticated.");
+//     await axios.post(
+//       AUTH_URL,
+//       {},
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
 //     return true;
 //   } catch (error) {
 //     console.error("Auth Check Error:", error);
 //     return false;
 //   }
 // };
+
+export const is_authenticated = async () => {
+  console.log("Checking authentication status..................");
+  try {
+    await axios.get(AUTH_URL, { withCredentials: true, credentials: 'include' });
+    console.log("User is authenticated.");
+    return true;
+  } catch (error) {
+    console.error("Auth Check Error:", error);
+    return false;
+  }
+};
 
 // export const UserToUploadDataAPI = async(uniqueUrl) => {
 //   try{
@@ -233,52 +241,59 @@ export const is_authenticated = async () => {
 // }
 // import axios from 'axios';
 import toast from 'react-hot-toast'; // 👈 Import the toast function
-
 export const UserToUploadDataAPI = async (uniqueUrl) => {
   try {
-    const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, { withCredentials: true });
+    const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, {
+      withCredentials: true
+    });
 
-    console.log("This is data user : ", response);
+    console.log("Full API Response:", response);
+    console.log("Response Data:", response.data);
 
-    // 1. Handle Application-Level Errors (Django returned a 200, but included an error field)
-    if (response.data.error) {
-      // alert(response.data.error); // Replace alert with toast
+    // Check if response has an error field
+    if (response.data && response.data.error) {
       toast.error(response.data.error);
-      // Optionally, return null or throw an error here if you don't want to return the partial data
+      return null;
     }
 
-    return response.data;
+    // Return owner_info if it exists
+    if (response.data && response.data.owner_info) {
+      console.log("Owner Info:", response.data.owner_info);
+      return response.data.owner_info;
+    }
+
+    // If no owner_info, return null
+    console.warn("No owner_info in response");
+    return null;
 
   } catch (error) {
-    // 2. Handle Network/HTTP Errors (Server Offline, 4xx, 5xx)
+    console.error("API Error:", error);
 
     let errorMessage = "An unknown error occurred. Try again later!";
 
-    // Check if the error is due to the server being completely offline (Network Error)
+    // Network error (server offline)
     if (axios.isAxiosError(error) && !error.response) {
       errorMessage = "🔴 Connection Failed: The server is offline or unreachable.";
-      // If offline, use a persistent toast
       toast.error(errorMessage, {
-        duration: Infinity, // Keeps the toast visible
+        duration: Infinity,
         position: 'top-center'
       });
-
-      // Check for specific HTTP status codes (e.g., 404, 500)
-    } else if (error.response) {
-      // Use the status code or the error message from the server response
+    }
+    // HTTP error (4xx, 5xx)
+    else if (error.response) {
       const status = error.response.status;
-      errorMessage = `Request failed: HTTP ${status} - ${error.response.data.detail || 'Server error'}`;
+      const detail = error.response.data?.detail || error.response.data?.error || 'Server error';
+      errorMessage = `Request failed: HTTP ${status} - ${detail}`;
       toast.error(errorMessage);
-    } else {
-      // Other errors (e.g., request setup failed)
+    }
+    // Other errors
+    else {
       toast.error(errorMessage);
     }
 
-    // Return the error object or null so the calling function can handle the failure
-    return null; // or throw error;
+    return null;
   }
-}
-
+};
 
 export const UploadDataAPI = async (data, uniqueUrl) => {
   try {
@@ -288,7 +303,7 @@ export const UploadDataAPI = async (data, uniqueUrl) => {
     });
     return response.data
   } catch (error) {
-    console.error("Order place Error : ",error)
+    console.error("Order place Error : ", error)
     return false;
   }
 };
@@ -310,3 +325,146 @@ export const CreateOrdersRazorpay = async (data) => {
 };
 
 
+
+// 1. Send OTP
+// export const sendOTPAPI = async (emailOrPhone) => {
+//   try {
+//     const response = await fetch(sendOTPURL, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ email_or_phone: emailOrPhone })
+//     });
+//     console.log("This is send otp response : ", response)
+//     return response;
+//   } catch (error) {
+//     console.error("Send OTP Error : ", error)
+//     return false;
+//   }
+// };
+
+// 1. Send OTP
+export const sendOTPAPI = async (emailOrPhone) => {
+  try {
+    const response = await fetch(sendOTPURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email_or_phone: emailOrPhone })
+    });
+
+    const data = await response.json();
+    // console.log("Send OTP response:", data);
+    
+
+    if (!response.ok) {
+      // Return error data for handling in component
+      toast.error(data.error || 'Failed to send OTP', { duration: 5000 });
+      return {
+        success: false,
+        error: data || 'Failed to send OTP',
+        status: response.status
+      };
+    }
+
+    // console.log("Send OTP success:", data);
+    toast.success(data.message, { duration: 5000 });
+
+    return {
+      success: true,
+      message: data.message,
+      status: response.status
+    };
+
+  } catch (error) {
+    console.error("Send OTP Error:", error);
+    return {
+      success: false,
+      error: 'Network error. Please try again.',
+      status: null
+    };
+  }
+};
+
+// 2. Verify OTP
+// 2. Verify OTP
+export const verifyOTPAPI = async (emailOrPhone, otp) => {
+  try {
+    const response = await fetch(verifyOTPURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email_or_phone: emailOrPhone,
+        otp: otp
+      })
+    });
+
+    const data = await response.json();
+    console.log("Verify OTP response:", data);
+
+    if (!response.ok) {
+      toast.error(data.error || 'Failed to verify OTP', { duration: 10000 });
+      return {
+        success: false,
+        error: data.error || 'Failed to verify OTP',
+        status: response.status
+      };
+    }
+    toast.success(data.message, { duration: 5000 });
+
+    return {
+      success: true,
+      message: data.message,
+      status: response.status
+    };
+
+  } catch (error) {
+    console.error("Verify OTP Error:", error);
+    return {
+      success: false,
+      error: 'Network error. Please try again.',
+      status: null
+    };
+  }
+};
+
+// 3. Reset Password
+// 3. Reset Password
+export const resetPasswordAPI = async (emailOrPhone, newPassword) => {
+  try {
+    const response = await fetch(resetPasswordURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email_or_phone: emailOrPhone,
+        new_password: newPassword
+        // Remove confirm_password from here
+      })
+    });
+
+    const data = await response.json();
+    console.log("Reset Password response:", data);
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: typeof data.error === 'object'
+          ? Object.values(data.error).flat().join(', ')
+          : data.error || 'Failed to reset password',
+        status: response.status
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message,
+      status: response.status
+    };
+
+  } catch (error) {
+    console.error("Reset Password Error:", error);
+    return {
+      success: false,
+      error: 'Network error. Please try again.',
+      status: null
+    };
+  }
+};

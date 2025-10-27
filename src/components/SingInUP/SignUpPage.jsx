@@ -5,8 +5,9 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
-import { SignUpAPI } from '../api/endpoints'
+import { SignUpAPI } from '../../api/endpoints'
 import toast from 'react-hot-toast'; // <--- MUST BE HERE
+import { Eye, EyeOff } from "lucide-react"
 
 function SignUpForm() {
   const [state, setState] = useState({
@@ -62,6 +63,27 @@ function SignUpForm() {
   };
 
 
+  // const [password, setPassword] = useState("");
+  // const [type, setType] = useState('password');
+  // const [icon, setIcon] = useState(eyeOff);
+
+
+  // const handleToggle = () => {
+  //   if (type === 'password') {
+  //     setIcon(eye);
+  //     setType('text')
+  //   } else {
+  //     setIcon(eyeOff)
+  //     setType('password')
+  //   }
+  // }
+
+  const [showPassword, setShowPassword] = useState(false)
+  
+
+
+
+
   return (
     <div className="form-container sign-up-container ">
       <form className="snin-form" onSubmit={handleOnSubmit}>
@@ -96,7 +118,7 @@ function SignUpForm() {
           placeholder="Email"
           required
         />
-        <input
+        {/* <input
           className="snin-input"
           type="password"
           name="password"
@@ -104,7 +126,19 @@ function SignUpForm() {
           onChange={handleChange}
           placeholder="Password"
           required
+        /> */}
+        <input
+          type={showPassword ? "text" : "password"}
+          className="snin-input"
+          name="password"
+          placeholder="Password"
+          value={state.password}
+          onChange={handleChange}
+          autoComplete="current-password"
         />
+        <span class="signup-eye-icon" onClick={() => setShowPassword(!showPassword)}>
+          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+        </span>
 
         <button className="snin-button" type="submit" disabled={loading}>
           {loading ? "Signing Up..." : "Sign Up"}

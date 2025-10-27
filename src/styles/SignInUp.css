@@ -20,7 +20,7 @@
   margin: -20px 0 50px;
 } */
 
-body.login-body{
+body.login-body {
   background: #f6f5f7;
   display: flex;
   justify-content: center;
@@ -146,7 +146,18 @@ body.login-body{
   animation: show 0.6s;
 }
 
+/* Eye icon styles */
+.signup-eye-icon {
+  position: absolute;
+  right: 60px;
+  top: 71%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #7f7f7f;
+}
+
 @keyframes show {
+
   0%,
   49.99% {
     opacity: 0;
@@ -242,4 +253,3 @@ body.login-body{
   height: 40px;
   width: 40px;
 }
-

@@ -316,7 +316,7 @@ const OrdersManagement = () => {
                             {/* 👁 View File */}
                             {order.FileUpload && (
                               <motion.a
-                                href={`http://127.0.0.1:8000${order.FileUpload}`}
+                                href={order.FileUpload}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn-icon"
@@ -345,7 +345,7 @@ const OrdersManagement = () => {
                                 className="btn-icon"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                onClick={() => downloadFile(`http://127.0.0.1:8000${order.FileUpload}`, "file.pdf")}
+                                onClick={() => downloadFile(order.FileUpload, "file.pdf")}
                                 title="Download File"
                               >
                                 <Download size={16} />
