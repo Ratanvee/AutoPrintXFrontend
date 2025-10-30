@@ -343,12 +343,12 @@ export const CreateOrdersRazorpay = async (data) => {
 // };
 
 // 1. Send OTP
-export const sendOTPAPI = async (emailOrPhone) => {
+export const sendOTPAPI = async (emailOrPhone, purpose) => {
   try {
     const response = await fetch(sendOTPURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email_or_phone: emailOrPhone })
+      body: JSON.stringify({ email_or_phone: emailOrPhone, purpose: purpose })
     });
 
     const data = await response.json();
