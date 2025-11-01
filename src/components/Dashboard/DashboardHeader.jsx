@@ -31,7 +31,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
         setStatus("🟢 Active");
         setColor("green");
         setAgentActive(true);
-      } 
+      }
       else {
         setStatus("🔴 Offline");
         setColor("red");
@@ -80,6 +80,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   useEffect(() => {
     if (agentActive) {
       fetchPrinters();
+      // console.log("these are printers : ", printers )
     }
   }, [agentActive]);
 
@@ -126,7 +127,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
     }
   };
 
-  
+
 
 
   return (
@@ -156,7 +157,8 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
       <button
         onClick={handleDownload}
         disabled={isDownloading}
-        className="download-btn"
+        // className="download-btn"
+        className="btn-primary btn-download-agent"
         target="_blank"
       >
         Download Printer Agent
@@ -168,8 +170,9 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
           <label htmlFor="printerName">Printer name</label>
           <select
             id="printerName"
+            className="status-filter"
             value={selectedPrinter}
-            onChange={(e) => { setSelectedPrinter(e.target.value), setSelectedPrinterr(e.target.value)}}
+            onChange={(e) => { setSelectedPrinter(e.target.value), setSelectedPrinterr(e.target.value) }}
             disabled={!agentActive} // disable select if agent offline
             style={{
               border: `2px solid ${agentActive ? "#ccc" : "red"}`,
@@ -177,14 +180,15 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
               backgroundColor: agentActive ? "white" : "#ffe6e6",
             }}
           >
-            
+
             {loading ? (
               <option>Loading printers...</option>
             ) : !agentActive ? (
               <option>🔴 Offline</option>
             ) : printers.length > 0 ? (
               printers.map((printer, index) => (
-                <option key={index} value={printer}>
+                <option key={1}>Select Printer Here</option>,
+                <option key={index+1} value={printer}>
                   {printer}
                 </option>
               ))

@@ -3,14 +3,51 @@ import { Save, Camera } from "lucide-react"
 import AutoPrintXPoster from '../QRCodeGenerator'
 import { getQRData } from "../../../global"
 
-const ProfileSettings = ({ settings, handleInputChange, handleSave, handleProfileImageChange, isSaving, localAvatarUrl }) => {
+const ProfileSettings = ({
+    settings,
+    handleInputChange,
+    handleSave,
+    handleProfileImageChange,
+    isSaving,
+    localAvatarUrl
+}) => {
+    // ✅ Safe access with optional chaining and fallbacks
+    const firstName = settings?.profile?.firstName || settings?.profile?.fullName
+    const email = settings?.profile?.email || ""
+    const role = settings?.profile?.role || "Shop Owner"
+    const avatar = settings?.profile?.avatar || ""
 
+    // ✅ Generate placeholder with safe fallback
+    const getInitial = () => {
+        if (firstName && firstName.length > 0) {
+            return firstName.charAt(0).toUpperCase()
+        }
+        return "U" // Default initial
+    }
+
+    // ✅ Determine image source with proper fallbacks
     const imageSrc = localAvatarUrl
-        ? localAvatarUrl
-        : settings.profile.avatarUrl
-            ? settings.profile.avatarUrl
-            : `https://placehold.co/120x120/4f46e5/ffffff?text=${settings.profile.fullName.charAt(0)}`;
+        || avatar
+        || `https://placehold.co/120x120/4f46e5/ffffff?text=${getInitial()}`
 
+    // ✅ Get QR data safely
+    const getQRDataSafely = () => {
+        try {
+            const qrData = getQRData()
+            return {
+                unique_url: qrData?.unique_url || "",
+                username: qrData?.username || firstName
+            }
+        } catch (error) {
+            console.error("Error getting QR data:", error)
+            return {
+                unique_url: "",
+                username: firstName
+            }
+        }
+    }
+
+    const qrData = getQRDataSafely()
 
     return (
         <motion.div
@@ -25,71 +62,87 @@ const ProfileSettings = ({ settings, handleInputChange, handleSave, handleProfil
             <form className="settings-form">
                 <div className="profile-image-section">
                     <div className="profile-image-container">
-                        {/* <img src={imageSrc || "/placeholder.svg"} alt="Profile" /> */}
                         <img
                             src={imageSrc}
                             alt="Profile Avatar"
                             className="w-full h-full object-cover rounded-full border-4 border-indigo-500 shadow-md transition duration-300"
-                            // Fallback for missing images
-                            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/120x120/4f46e5/ffffff?text=${settings.profile.ownerName.charAt(0)}`; }}
+                            onError={(e) => {
+                                e.target.onerror = null
+                                e.target.src = `https://placehold.co/120x120/4f46e5/ffffff?text=${getInitial()}`
+                            }}
                         />
                         <div className="profile-image-overlay">
                             <label htmlFor="profileImage" className="image-upload-label">
                                 <Camera size={20} />
                             </label>
-                            <input 
-                                type="file" 
-                                id="profileImage" 
-                                accept="image/*" 
-                                style={{ display: "none" }} 
-                                onChange={handleProfileImageChange} 
+                            <input
+                                type="file"
+                                id="profileImage"
+                                accept="image/*"
+                                style={{ display: "none" }}
+                                onChange={handleProfileImageChange}
                                 disabled={isSaving}
+                                // placeholder="AutoPrintX Print Shop"
                             />
-                        
-                            {/* <input type="file" id="profileImage" accept="image/*" style={{ display: "none" }} onChange={handleProfileImageChange} /> */}
-                            
                         </div>
                     </div>
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="fullName">Full Name</label>
+                    <label htmlFor="firstName">Full Name</label>
                     <input
                         type="text"
-                        id="fullName"
-                        value={settings.profile.fullName}
-                        onChange={(e) => handleInputChange("profile", "fullName", e.target.value)}
+                        id="firstName"
+                        value={firstName}
+                        onChange={(e) => handleInputChange("profile", "firstName", e.target.value)}
+                        placeholder="Enter your full name"
                     />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="profileEmail">Email</label>
                     <input
                         type="email"
                         id="profileEmail"
-                        value={settings.profile.email}
+                        value={email}
                         onChange={(e) => handleInputChange("profile", "email", e.target.value)}
+                        placeholder="Enter your email"
+                        disabled
                     />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="role">Role</label>
-                    <input type="text" id="role" value={settings.profile.role} readOnly />
+                    <input
+                        type="text"
+                        id="role"
+                        value={role}
+                        readOnly
+                        className="readonly-input"
+                    />
                 </div>
+
                 <motion.button
                     type="button"
                     className="btn-primary"
                     onClick={() => handleSave("profile")}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    disabled={isSaving}
                 >
                     <Save size={16} />
-                    Update Profile
+                    {isSaving ? "Updating..." : "Update Profile"}
                 </motion.button>
             </form>
-            <AutoPrintXPoster
-                value={`${import.meta.env.VITE_QRCodeURL}upload/${getQRData().unique_url}`}
-                ownerName={getQRData().username}
-            />
+
+            {qrData.unique_url && (
+                <AutoPrintXPoster
+                    value={`${import.meta.env.VITE_QRCodeURL}upload/${qrData.unique_url}`}
+                    ownerName={qrData.username}
+                />
+            )}
         </motion.div>
-    );
-};
+    )
+}
 
 export default ProfileSettings

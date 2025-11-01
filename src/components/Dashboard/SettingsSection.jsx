@@ -11,7 +11,7 @@ import ProfileSettings from "./settings/ProfileSettings"
 import SecuritySettings from "./settings/SecuritySettings"
 import NotificationsSettings from "./settings/NotificationsSettings"
 import BillingSettings from "./settings/BillingSettings"
-
+import toast from "react-hot-toast"
 import { get_dashboard, DashboardSettings, UpdateDashboardSettings, ChangePasswordAPI } from "./api/endpoints"
 
 const SettingsSection = () => {
@@ -19,19 +19,21 @@ const SettingsSection = () => {
   const location = useLocation()
   const [showPassword, setShowPassword] = useState(false)
   const [QRData, setQRData] = useState(null)
+  const [SomeChange, setSomeChange] = useState(false)
+  
 
   const [settings, setSettings] = useState({
     general: {
-      shopName: "AutoPrintX Print Shop",
-      email: "contact@autoprintx.com",
-      phone: "+1 (555) 123-4567",
-      address: "123 Printing Street, Document City",
+      shopName: "",
+      email: "",
+      phone: "",
+      address: "",
       currency: "INR",
       timezone: "Asia/Kolkata",
     },
     profile: {
-      fullName: "Admin User",
-      email: "admin@autoprintx.com",
+      fullName: "",
+      email: "",
       role: "Shop Owner",
       avatar: "https://placehold.co/150x150/0a2463/white?text=A",
     },
@@ -78,6 +80,7 @@ const SettingsSection = () => {
   const activeTab = getActiveTab()
 
   const handleInputChange = (section, field, value) => {
+    setSomeChange(true)
     setSettings((prev) => ({
       ...prev,
       [section]: {
@@ -89,7 +92,7 @@ const SettingsSection = () => {
 
 
   // NEW STATE: Holds the temporary URL for the local image preview
-  const [localAvatarUrl, setLocalAvatarUrl] = useState(null); 
+  const [localAvatarUrl, setLocalAvatarUrl] = useState(null);
 
   // --- NEW: Separate handler for file input ---
   const handleProfileImageChange = (e) => {
@@ -114,39 +117,80 @@ const SettingsSection = () => {
   };
 
   const handleSave = (section) => {
-    console.log(`Saving ${section} settings:`, settings[section])
-    // console.log("This is general settings data: ", settings.general)
-    // console.log("This is profile settings data: ", settings.profile)
-    // console.log("This is security settings data: ", settings.security)
-    // console.log("This is notifications settings data: ", settings.notifications)
-    // console.log("This is billing settings data: ", settings.billing)
+    // console.log(`Saving ${section} settings:`, settings[section])
+    setSomeChange(false)
+    if (SomeChange){
+      if (section === 'security') {
+        // Add your security-specific validation here
+        data = ChangePasswordAPI(settings[section])
+      }
+      else {
+        // Add your API call here
+        UpdateDashboardSettings(section, settings[section])
+      }
+    } else{
+      toast.error("No Changes detected")
 
-    if (section === 'security') {
-
-      // const formData = new FormData();
-      // formData.append('section', section);
-      console.log("This is settings[section]: ", settings[section])
-      // Add your security-specific validation here
-      data = ChangePasswordAPI(settings[section])
-      console.log("Change Password API response: ", data)
-
-      
     }
-    else {
-      // Add your API call here
-      UpdateDashboardSettings(section, settings[section])
-    }
+
+    
 
   }
 
-  const fetchDashboardData = async () => {
-    const data = await get_dashboard()
-    setQRData(data)
+  const fetchSettings = async () => {
+    // setLoading(true)
+    try {
+      const response = await DashboardSettings()
+
+      // Update settings with fetched data
+      setSettings({
+        general: {
+          shopName: response.settings.general.shopName || "",
+          email: response.settings.general.email || "",
+          phone: response.settings.general.phone || "",
+          address: response.settings.general.address || "",
+          currency: response.settings.general.currency || "INR",
+          timezone: response.settings.general.timezone || "Asia/Kolkata",
+        },
+        profile: {
+          fullName: response.settings.profile.fullName || "",
+          email: response.settings.profile.email || "",
+          role: response.settings.profile.role || "Shop Owner",
+          avatar: response.settings.profile.avatar || "",
+        },
+        security: {
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+          twoFactor: false,
+        },
+        notifications: {
+          emailOrders: true,
+          emailCustomers: true,
+          emailReports: false,
+          pushOrders: true,
+          pushCustomers: false,
+          pushReports: true,
+        },
+        billing: {
+          plan: "Professional Plan - $79/month",
+          billingCycle: "monthly",
+          paymentMethod: "Visa ending in 4242",
+          billingAddress: "123 Printing Street, Document City",
+        },
+      })
+
+      // console.log("✅ Settings loaded:", response.settings)
+    } catch (error) {
+      console.error("Error fetching settings:", error)
+      toast.error("Failed to load settings")
+    } finally {
+      // setLoading(false)
+    }
   }
 
   useEffect(() => {
-    fetchDashboardData()
-    DashboardSettings()
+    fetchSettings()
   }, [])
 
   return (

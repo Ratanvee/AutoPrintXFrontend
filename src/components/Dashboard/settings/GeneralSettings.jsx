@@ -19,6 +19,7 @@ const GeneralSettings = ({ settings, handleInputChange, handleSave }) => (
                     id="shopName"
                     value={settings.general.shopName}
                     onChange={(e) => handleInputChange("general", "shopName", e.target.value)}
+                    placeholder="AutoPrintX Shop"
                 />
             </div>
             <div className="form-group">
@@ -28,6 +29,8 @@ const GeneralSettings = ({ settings, handleInputChange, handleSave }) => (
                     id="email"
                     value={settings.general.email}
                     onChange={(e) => handleInputChange("general", "email", e.target.value)}
+                    placeholder="Enter your shop Email"
+                    disabled
                 />
             </div>
             <div className="form-group">
@@ -37,6 +40,7 @@ const GeneralSettings = ({ settings, handleInputChange, handleSave }) => (
                     id="phone"
                     value={settings.general.phone}
                     onChange={(e) => handleInputChange("general", "phone", e.target.value)}
+                    placeholder="Enter your Phone No."
                 />
             </div>
             <div className="form-group">
@@ -46,6 +50,7 @@ const GeneralSettings = ({ settings, handleInputChange, handleSave }) => (
                     rows="3"
                     value={settings.general.address}
                     onChange={(e) => handleInputChange("general", "address", e.target.value)}
+                    placeholder="Enter your Shop Address"
                 />
             </div>
             <div className="form-row">

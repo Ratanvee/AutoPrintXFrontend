@@ -38,6 +38,7 @@ export default function StepUpload({ uploadedFiles, setUploadedFiles, nextStep }
                         }
                     } else {
                         console.warn(`File ${file.name} is a non-PDF document. Conversion to PDF required for page count.`);
+                        // alert('Your document should only be PDF or in image format!!!');
                         pageCount = null;
                     }
 

@@ -1,8 +1,5 @@
-// OwnerProfileCard.jsx
 import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, MessageCircle, Mail, ChevronDown, X, AlertCircle } from 'lucide-react';
-// import { MapPin, Phone, MessageCircle, Mail, ChevronDown, X, AlertCircle } from 'lucide-react';
-// import './OwnerProfileCard.css';
 
 const OwnerProfileCard = ({ shop }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -20,15 +17,6 @@ const OwnerProfileCard = ({ shop }) => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-
-    // Debug logging
-    // useEffect(() => {
-    //     console.log("OwnerProfileCard received shop prop:", shop);
-    //     console.log("Shop type:", typeof shop);
-    //     console.log("Shop is null?", shop === null);
-    //     console.log("Shop is undefined?", shop === undefined);
-    // }, [shop]);
 
     // If shop data is null or undefined, show error message
     if (!shop || typeof shop !== 'object' || Object.keys(shop).length === 0) {

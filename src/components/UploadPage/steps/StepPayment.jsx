@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreditCard, ArrowLeft, ArrowRight, IndianRupee } from "lucide-react";
 import { CreateOrdersRazorpay } from '../../../api/endpoints';
+import LoadingButton from "../../SingInUP/components/LoadingButton";
 
 export default function StepPayment({
     paymentMethod,
@@ -73,6 +74,7 @@ export default function StepPayment({
                     <button
                         className={`payment-tab ${paymentMethod === "rezorpay" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("rezorpay")}
+                        disabled
                     >
                         <CreditCard size={16} />
                         RazorPay
@@ -80,6 +82,7 @@ export default function StepPayment({
                     <button
                         className={`payment-tab ${paymentMethod === "cash" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("cash")}
+
                     >
                         <CreditCard size={16} />
                         Cash
@@ -87,18 +90,21 @@ export default function StepPayment({
                     <button
                         className={`payment-tab ${paymentMethod === "card" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("card")}
+                        disabled
                     >
                         Credit Card
                     </button>
                     <button
                         className={`payment-tab ${paymentMethod === "paypal" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("paypal")}
+                        disabled
                     >
                         PayPal
                     </button>
                     <button
                         className={`payment-tab ${paymentMethod === "bank" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("bank")}
+                        disabled
                     >
                         Bank Transfer
                     </button>
@@ -263,7 +269,7 @@ export default function StepPayment({
                 >
                     <ArrowLeft size={16} /> Previous
                 </motion.button>
-                <motion.button
+                {/* <motion.button
                     className="btn-primary"
                     onClick={handleCompleteOrder}
                     disabled={loading}
@@ -271,7 +277,20 @@ export default function StepPayment({
                     whileTap={{ scale: 0.95 }}
                 >
                     Complete Order <ArrowRight size={16} />
-                </motion.button>
+                </motion.button> */}
+                <LoadingButton
+                    loading={loading}
+                    className="btn-primary"
+                    loadingText="Submitting Order ..."
+                    // type="submit"
+                    style={{ marginTop: '10px' }}
+                    onClick={handleCompleteOrder}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+
+                >
+                    Complete Order <ArrowRight size={16} />
+                </LoadingButton>
             </div>
         </motion.div>
     );

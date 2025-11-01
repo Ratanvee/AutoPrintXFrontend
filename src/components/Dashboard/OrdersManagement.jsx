@@ -19,7 +19,7 @@ import {
 
 import { get_dashboard, fetchOrdersAPI } from "./api/endpoints";
 // ✅ Axios setup
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/"
+// axios.defaults.baseURL = "http://127.0.0.1:8000/api/"
 axios.defaults.withCredentials = true
 
 const OrdersManagement = () => {
@@ -36,16 +36,6 @@ const OrdersManagement = () => {
   const fetchOrders = async () => {
     setLoading(true)
     try {
-      // const res = await axios.get("filter-orders/", {
-      //   params: {
-      //     search: searchTerm,
-      //     status: statusFilter,
-      //     from: dateRange.from,
-      //     to: dateRange.to,
-      //     page: currentPage,
-      //     per_page: itemsPerPage,
-      //   },
-      // })
       const data = await fetchOrdersAPI(searchTerm, statusFilter, dateRange.from, dateRange.to, currentPage, itemsPerPage);
       setOrders(data.orders || [])
       setTotalPages(data.total_pages || 1)

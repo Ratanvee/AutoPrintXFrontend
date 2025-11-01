@@ -3,19 +3,7 @@ import '../styles/LandingPage.css';
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Printer, Copy, BookOpen, Truck, Check, Star, MapPin, Phone, Mail, Clock } from "lucide-react"
 import { Link } from "react-router-dom"
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import {
-//     faPrint,
-//     faCopy,
-//     faBook,
-//     faTruck,
-//     faCheck,
-//     faMapMarkerAlt,
-//     faPhone,
-//     faEnvelope,
-//     faClock
-// } from '@fortawesome/free-solid-svg-icons';
 import {
     faFacebookF,
     faTwitter,

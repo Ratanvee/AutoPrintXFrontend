@@ -12,7 +12,7 @@ import ProductsManagement from "../components/Dashboard/ProductsManagement"
 import ReportsSection from "../components/Dashboard/ReportsSection"
 import SettingsSection from "../components/Dashboard/SettingsSection"
 import NotificationsPanel from "../components/Dashboard/NotificationsPanel"
-import '../styles/styles/dashboard.css';
+import '../styles/dashboard/dashboard.css';
 // Updated import path for dashboard styles
 // import { is_authenticated } from "../api/endpoints";
 import { useEffect } from "react";

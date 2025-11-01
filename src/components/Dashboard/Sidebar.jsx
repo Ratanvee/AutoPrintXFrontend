@@ -7,8 +7,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { setQRData } from "../../global";
-
-
+import toast from "react-hot-toast";
 
 const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
   const location = useLocation()
@@ -31,6 +30,12 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
       const data = await get_dashboard();
       setDashboardData(data);
       setQRData(data.user);
+      console.log("this is check modfied or not : ", data.user.is_modified)
+      if (!data.user.is_modified){
+        toast.error("Please Update your info First !!")
+          // < Navigate to = "/target-page"/>
+        navigate('/dashboard/settings');
+      }
     };
 
     fetchData();

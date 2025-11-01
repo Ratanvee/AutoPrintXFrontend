@@ -1,7 +1,5 @@
-
-
 import axios from "axios";
-// import { c } from "framer-motion/dist/types.d-Cjd591yU";
+import toast from 'react-hot-toast'; // 👈 Import the toast function
 
 // const API_URL = "http://127.0.0.1:8000/api/";
 const API_URL = import.meta.env.VITE_BaseURL1;
@@ -18,42 +16,17 @@ const sendOTPURL = `${API_URL}send-otp/`;
 const verifyOTPURL = `${API_URL}verify-otp/`;
 const resetPasswordURL = `${API_URL}reset-password/`;
 
-
-
-
 axios.defaults.withCredentials = true;
-
-// export const login = async (username, password) => {
-//   try {
-//     console.log("Attempting login...")
-//     const response = await axios.post(
-//       LOGIN_URL,
-//       { username, password },
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     return response.data.success;
-//   } catch (error) {
-//     console.error("Login Error:", error);
-//     return false;
-//   }
-// };
-
 
 export const login = async (username, password) => {
   try {
-    console.log("Attempting login...");
+    // console.log("Attempting login...");
     const response = await axios.post(LOGIN_URL, { username, password }, {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,  // Important for cookies
     });
 
     if (response.data.success) {
-      console.log("Access Token : ", response.data.AccessToken)
-      console.log("Access Token : ", response.data.RefreshToken)
       return true;
     } else {
       // console.error('Login failed:', response.data.error);
@@ -194,27 +167,8 @@ export const logout = async () => {
   }
 };
 
-// export const is_authenticated = async () => {
-//   console.log("Checking authentication status..................");
-//   try {
-//     await axios.post(
-//       AUTH_URL,
-//       {},
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     return true;
-//   } catch (error) {
-//     console.error("Auth Check Error:", error);
-//     return false;
-//   }
-// };
-
 export const is_authenticated = async () => {
-  console.log("Checking authentication status..................");
+  // console.log("Checking authentication status..................");
   try {
     await axios.get(AUTH_URL, { withCredentials: true, credentials: 'include' });
     console.log("User is authenticated.");
@@ -225,30 +179,11 @@ export const is_authenticated = async () => {
   }
 };
 
-// export const UserToUploadDataAPI = async(uniqueUrl) => {
-//   try{
-//     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, { withCredentials: true });
-//     console.log("This is data user : ", response)
-//     if (response.data.error){
-//       alert(response.data.error)
-//     }
-//     return response.data;
-//   } catch (error) {
-//     // console.log("Somthing Whent Wrong..")
-//     // alert("Somthing went Wrong... Try again later!!")
-//     return error;
-//   }
-// }
-// import axios from 'axios';
-import toast from 'react-hot-toast'; // 👈 Import the toast function
 export const UserToUploadDataAPI = async (uniqueUrl) => {
   try {
     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, {
       withCredentials: true
     });
-
-    console.log("Full API Response:", response);
-    console.log("Response Data:", response.data);
 
     // Check if response has an error field
     if (response.data && response.data.error) {
@@ -258,7 +193,7 @@ export const UserToUploadDataAPI = async (uniqueUrl) => {
 
     // Return owner_info if it exists
     if (response.data && response.data.owner_info) {
-      console.log("Owner Info:", response.data.owner_info);
+      // console.log("Owner Info:", response.data.owner_info);
       return response.data.owner_info;
     }
 
@@ -324,24 +259,6 @@ export const CreateOrdersRazorpay = async (data) => {
   }
 };
 
-
-
-// 1. Send OTP
-// export const sendOTPAPI = async (emailOrPhone) => {
-//   try {
-//     const response = await fetch(sendOTPURL, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ email_or_phone: emailOrPhone })
-//     });
-//     console.log("This is send otp response : ", response)
-//     return response;
-//   } catch (error) {
-//     console.error("Send OTP Error : ", error)
-//     return false;
-//   }
-// };
-
 // 1. Send OTP
 export const sendOTPAPI = async (emailOrPhone, purpose) => {
   try {
@@ -398,7 +315,7 @@ export const verifyOTPAPI = async (emailOrPhone, otp) => {
     });
 
     const data = await response.json();
-    console.log("Verify OTP response:", data);
+    // console.log("Verify OTP response:", data);
 
     if (!response.ok) {
       toast.error(data.error || 'Failed to verify OTP', { duration: 10000 });
@@ -441,7 +358,7 @@ export const resetPasswordAPI = async (emailOrPhone, newPassword) => {
     });
 
     const data = await response.json();
-    console.log("Reset Password response:", data);
+    // console.log("Reset Password response:", data);
 
     if (!response.ok) {
       return {

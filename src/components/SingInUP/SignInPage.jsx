@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,12 +13,18 @@ import { useNavigate } from "react-router-dom";
 // import { LoaderCircle, TruckElectric } from 'lucide-react';
 import { Loader } from 'rsuite';
 import CircularProgress from '@mui/material/CircularProgress';
+import LoadingButton from "./components/LoadingButton";
 
 function SignInForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState('');
     const { login_user } = useAuth();
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingv, setIsLoadingv] = useState(false);
+    const [valueuser, setValueuser] = useState("signin");
+
     // const [errorMessage, setErrorMessage] = useState('');  // For showing errors
     const nav = useNavigate();
 
@@ -38,17 +43,21 @@ function SignInForm() {
 
     const handleLogin = async () => {
         // Your existing login logic
+        setIsLoading(true)
         const success = await login(username, password);
         if (success) {
             // Handle successful login (e.g., redirect to dashboard)
             console.log("Login successful");
             // setIsAuthenticated(true);
+            setIsLoading(false)
             nav("/dashboard");
         } else {
             // Handle login failure (e.g., show error message)
             toast.error('Incorrect username or password');
             // setErrorMessage('Incorrect username or password');
             console.log("Login failed");
+            setIsLoading(false)
+
         }
         // console.log("Login with:", username, password);
     };
@@ -72,10 +81,6 @@ function SignInForm() {
         setConfirmPassword("");
         setErrorMessage("");
     };
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingv, setIsLoadingv] = useState(false);
-    const [valueuser, setValueuser] = useState("signin");
 
     const handleSendOTP = async () => {
         setIsLoading(true);
@@ -132,6 +137,7 @@ function SignInForm() {
 
     const handleVerifyOTP = async () => {
         const otpValue = otp.join("");
+        setIsLoading(true)
 
         if (otpValue.length !== 4) {
             setErrorMessage("Please enter complete OTP");
@@ -167,18 +173,22 @@ function SignInForm() {
     };
     const handleResetPassword = async () => {
         // Frontend validation
+        setIsLoading(true)
         if (!newPassword || !confirmPassword) {
             setErrorMessage("Please fill in all fields");
+            setIsLoading(false)
             return;
         }
 
         if (newPassword !== confirmPassword) {
             setErrorMessage("Passwords do not match");
+            setIsLoading(false)
             return;
         }
 
         if (newPassword.length < 8) {
             setErrorMessage("Password must be at least 8 characters");
+            setIsLoading(false)
             return;
         }
 
@@ -205,10 +215,13 @@ function SignInForm() {
                 setErrorMessage(response.error);
                 toast.error(response.error, { duration: 5000 });
             }
+            setIsLoading(false)
         } catch (error) {
             setErrorMessage("Failed to reset password. Please try again.");
             toast.error("Failed to reset password. Please try again.", { duration: 5000 });
         }
+        setIsLoading(false)
+
     };
     return (
         <div className="form-container sign-in-container">
@@ -252,10 +265,16 @@ function SignInForm() {
                         }}>
                             Forgot your password?
                         </a>
-                        {/* <Loader content="Sending OTP..." speed="slow" size="sm" /> */}
-                        <button className="snin-button" type="button" onClick={handleLogin}>
-                            Sign In
-                        </button>
+                        <LoadingButton
+                            loading={isLoading}
+                            className="snin-button"
+                            loadingText="SignIning..."
+                            onClick={handleLogin}
+                            type="button"
+                            style={{ marginTop: '10px' }}
+                        >
+                            SignIn
+                        </LoadingButton>
                     </>
                 ) : (
                     // Forgot Password Flow
@@ -297,14 +316,24 @@ function SignInForm() {
                                     onChange={(e) => setEmailOrPhone(e.target.value)}
                                 />
 
-                                <button
+                                {/* <button
                                     className="snin-button"
                                     type="button"
                                     onClick={handleSendOTP}
                                     style={{ marginTop: '10px' }}
                                 >
-                                        {isLoading ? <span><CircularProgress size="20px" color="inherit" /> Sending OTP...</span> : "Send OTP"}
-                                </button>
+                                    {isLoading ? <span><CircularProgress size="20px" color="inherit" /> Sending OTP...</span> : "Send OTP"}
+                                </button> */}
+                                <LoadingButton
+                                    loading={isLoading}
+                                    className="snin-button"
+                                    loadingText="Sending OTP..."
+                                    onClick={handleSendOTP}
+                                    type="button"
+                                    style={{ marginTop: '10px' }}
+                                >
+                                    Send OTP
+                                </LoadingButton>
                             </>
                         )}
 
@@ -353,13 +382,23 @@ function SignInForm() {
                                     ))}
                                 </div>
 
-                                <button
+                                {/* <button
                                     className="snin-button"
                                     type="button"
                                     onClick={handleVerifyOTP}
                                 >
                                     {isLoadingv ? <span style={{ marginLeft: '10px' }}><CircularProgress size="16px" color="inherit" /> Verifing...</span> : "Verify OTP"}
-                                </button>
+                                </button> */}
+                                <LoadingButton
+                                    loading={isLoading}
+                                    className="snin-button"
+                                    loadingText="Verifing..."
+                                    onClick={handleVerifyOTP}
+                                    type="button"
+                                    style={{ marginTop: '10px' }}
+                                >
+                                    Verify OTP
+                                </LoadingButton>
 
                                 <a
                                     href="#"
@@ -405,14 +444,24 @@ function SignInForm() {
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
 
-                                <button
+                                {/* <button
                                     className="snin-button"
                                     type="button"
                                     onClick={handleResetPassword}
                                     style={{ marginTop: '10px' }}
                                 >
                                     Reset Password
-                                </button>
+                                </button> */}
+                                <LoadingButton
+                                    loading={isLoading}
+                                    className="snin-button"
+                                    loadingText="Changing..."
+                                    onClick={handleResetPassword}
+                                    type="button"
+                                    style={{ marginTop: '10px' }}
+                                >
+                                    Reset Password
+                                </LoadingButton>
                             </>
                         )}
                     </>

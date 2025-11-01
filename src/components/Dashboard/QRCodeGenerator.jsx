@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import html2canvas from "html2canvas";

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 
-export default function StepConfirmation({ orderId, calculateTotal, paymentMethod }) {
+export default function StepConfirmation({ orderId, calculateTotal, paymentMethod, uniqueID }) {
     return (
         <motion.div
             key="step4"
@@ -62,9 +62,12 @@ export default function StepConfirmation({ orderId, calculateTotal, paymentMetho
                     <Link to="/" className="btn-secondary">
                         Back to Home
                     </Link>
-                    <Link to="/dashboard" className="btn-primary">
-                        Track Order
+                    <Link to='/' className="btn-primary">
+                        Again Order
                     </Link>
+                    {/* <button onClick={window.location.reload()} className="btn-primary">
+                        Order Again
+                    </button> */}
                 </div>
             </div>
         </motion.div>

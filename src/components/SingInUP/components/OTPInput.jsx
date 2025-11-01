@@ -1,12 +1,5 @@
 import React, { useRef } from 'react';
 
-/**
- * Reusable OTP Input Component
- * @param {Array} otp - Array of OTP digits
- * @param {Function} setOtp - Function to update OTP state
- * @param {string} otpStatus - Status: "success", "error", or ""
- * @param {Function} onComplete - Optional callback when OTP is complete
- */
 const OTPInput = ({ otp, setOtp, otpStatus = "", onComplete }) => {
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
