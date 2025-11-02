@@ -182,48 +182,88 @@ export const is_authenticated = async () => {
 export const UserToUploadDataAPI = async (uniqueUrl) => {
   try {
     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, {
-      withCredentials: true
+      withCredentials: true,
+      timeout: 10000, // 10 second timeout
     });
 
     // Check if response has an error field
     if (response.data && response.data.error) {
-      toast.error(response.data.error);
+      toast.error(` ${response.data.error}`, {
+        duration: 5000,
+        position: 'top-center',
+      });
       return null;
     }
 
     // Return owner_info if it exists
     if (response.data && response.data.owner_info) {
-      // console.log("Owner Info:", response.data.owner_info);
       return response.data.owner_info;
     }
 
     // If no owner_info, return null
     console.warn("No owner_info in response");
+    toast.warning(' Shop information incomplete', {
+      duration: 3000,
+    });
     return null;
 
   } catch (error) {
     console.error("API Error:", error);
 
     let errorMessage = "An unknown error occurred. Try again later!";
+    let toastOptions = {
+      duration: 5000,
+      position: 'top-center',
+    };
 
     // Network error (server offline)
     if (axios.isAxiosError(error) && !error.response) {
-      errorMessage = "🔴 Connection Failed: The server is offline or unreachable.";
-      toast.error(errorMessage, {
-        duration: Infinity,
-        position: 'top-center'
-      });
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = " Request timeout: The server took too long to respond";
+      } else {
+        errorMessage = " Connection Failed: The server is offline or unreachable. Please check your internet connection.";
+        toastOptions.duration = 2000;
+        toastOptions.style = {
+          background: '#ef4444',
+          color: '#fff',
+          fontWeight: 'bold',
+        };
+      }
+      toast.error(errorMessage, toastOptions);
     }
     // HTTP error (4xx, 5xx)
     else if (error.response) {
       const status = error.response.status;
-      const detail = error.response.data?.detail || error.response.data?.error || 'Server error';
-      errorMessage = `Request failed: HTTP ${status} - ${detail}`;
-      toast.error(errorMessage);
+      const detail = error.response.data?.detail ||
+        error.response.data?.error ||
+        error.response.data?.message ||
+        'Server error';
+
+      switch (status) {
+        case 400:
+          errorMessage = ` Bad Request: ${detail}`;
+          break;
+        case 404:
+          errorMessage = `Not Found: ${detail}`;
+          toast.error(errorMessage, {
+            duration: 6000,
+            position: 'top-center',
+            icon: '🏪',
+          });
+          return null;
+        case 500:
+          errorMessage = ` Server Error: ${detail}`;
+          toastOptions.duration = 7000;
+          break;
+        default:
+          errorMessage = ` Error ${status}: ${detail}`;
+      }
+
+      toast.error(errorMessage, toastOptions);
     }
     // Other errors
     else {
-      toast.error(errorMessage);
+      toast.error(`❌ ${errorMessage}`, toastOptions);
     }
 
     return null;
@@ -231,18 +271,138 @@ export const UserToUploadDataAPI = async (uniqueUrl) => {
 };
 
 export const UploadDataAPI = async (data, uniqueUrl) => {
+  let uploadToast = null;
+
   try {
     const response = await axios.post(`${UPLOAD_URL}${uniqueUrl}/`, data, {
       withCredentials: true,
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 60000, // 60 second timeout for file uploads
     });
-    return response.data
+
+    // Check response for errors
+    if (response.data && response.data.error) {
+      toast.error(`Upload Failed: ${response.data.error}`, {
+        duration: 6000,
+        position: 'top-center',
+      });
+      return { error: response.data.error };
+    }
+
+    return response.data;
+
   } catch (error) {
-    console.error("Order place Error : ", error)
-    return false;
+    console.error("Order place Error:", error);
+
+    // Dismiss loading toast
+    if (uploadToast) {
+      toast.dismiss(uploadToast);
+    }
+
+    let errorMessage = "Failed to upload. Please try again.";
+    let toastOptions = {
+      duration: 6000,
+      position: 'top-center',
+    };
+
+    // Network error
+    if (axios.isAxiosError(error) && !error.response) {
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = " Upload timeout: Your file is too large or connection is slow. Try with smaller files.";
+      } else {
+        errorMessage = " Connection Lost: Check your internet connection and try again.";
+      }
+      toast.error(errorMessage, toastOptions);
+      return { error: errorMessage };
+    }
+
+    // HTTP error
+    if (error.response) {
+      const status = error.response.status;
+      const detail = error.response.data?.error ||
+        error.response.data?.details ||
+        error.response.data?.message ||
+        'Unknown error';
+
+      switch (status) {
+        case 400:
+          errorMessage = ` Invalid Data: ${detail}`;
+          if (detail.includes('size')) {
+            toast.error(` ${errorMessage}`, {
+              ...toastOptions,
+              duration: 8000,
+              icon: '⚠️',
+            });
+          } else {
+            toast.error(errorMessage, toastOptions);
+          }
+          break;
+        case 404:
+          errorMessage = ` Shop Not Found: ${detail}`;
+          toast.error(errorMessage, toastOptions);
+          break;
+        case 413:
+          errorMessage = " File Too Large: Please upload files smaller than 25MB";
+          toast.error(errorMessage, {
+            ...toastOptions,
+            duration: 8000,
+          });
+          break;
+        case 500:
+          errorMessage = ` Server Error: ${detail}`;
+          toast.error(errorMessage, {
+            ...toastOptions,
+            duration: 8000,
+          });
+          break;
+        default:
+          errorMessage = ` Upload Failed (${status}): ${detail}`;
+          toast.error(errorMessage, toastOptions);
+      }
+
+      return { error: errorMessage, status };
+    }
+
+    // Generic error
+    toast.error(` ${errorMessage}`, toastOptions);
+    return { error: errorMessage };
   }
 };
 
+// Optional: Add a retry mechanism
+export const UploadDataAPIWithRetry = async (data, uniqueUrl, maxRetries = 2) => {
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    try {
+      const result = await UploadDataAPI(data, uniqueUrl);
+
+      if (!result.error) {
+        return result;
+      }
+
+      attempt++;
+      if (attempt < maxRetries) {
+        toast.loading(` Retrying... Attempt ${attempt + 1} of ${maxRetries}`, {
+          duration: 2000,
+        });
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+      }
+    } catch (error) {
+      attempt++;
+      if (attempt >= maxRetries) {
+        throw error;
+      }
+    }
+  }
+
+  toast.error('Upload failed after multiple attempts', {
+    duration: 6000,
+  });
+  return { error: 'Upload failed after retries' };
+};
 
 export const CreateOrdersRazorpay = async (data) => {
   try {
