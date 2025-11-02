@@ -18,6 +18,14 @@ const OwnerProfileCard = ({ shop }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // ✅ Generate placeholder with safe fallback
+    const getInitial = () => {
+        if (shop?.ownerName && shop?.ownerName.length > 0) {
+            return shop?.ownerName.charAt(9).toUpperCase()
+        }
+        return "U" // Default initial
+    }
+
     // If shop data is null or undefined, show error message
     if (!shop || typeof shop !== 'object' || Object.keys(shop).length === 0) {
         return (
@@ -43,8 +51,12 @@ const OwnerProfileCard = ({ shop }) => {
                     <div className="owner-card-left-section">
                         <div className="owner-card-shop-image">
                             <img
-                                src={shop?.image || "https://via.placeholder.com/150"}
+                                src={shop?.image || `https://placehold.co/120x120/4f46e5/ffffff?text=${getInitial()}`}
                                 alt={shop?.name}
+                                onError={(e) => {
+                                    e.target.onerror = null
+                                    e.target.src = `https://placehold.co/120x120/4f46e5/ffffff?text=${getInitial()}`
+                                }}
                             />
                         </div>
                         <div className="owner-card-text-section">

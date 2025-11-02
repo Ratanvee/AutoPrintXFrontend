@@ -30,7 +30,7 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
       const data = await get_dashboard();
       setDashboardData(data);
       setQRData(data.user);
-      console.log("this is check modfied or not : ", data.user.is_modified)
+      console.log("this is check modfied or not : ", data.user)
       if (!data.user.is_modified){
         toast.error("Please Update your info First !!")
           // < Navigate to = "/target-page"/>
@@ -61,9 +61,9 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
       transition={{ duration: 0.3 }}
     >
       <div className="sidebar-header">
-        <motion.img initial={false} animate={{ opacity: collapsed ? 1 : 1 }} transition={{ duration: 0.2 }} src="/SmartDocXCircleLogo.png" alt="Logo" />
+        <motion.img initial={false} animate={{ opacity: collapsed ? 1 : 1 }} transition={{ duration: 0.2 }} src="/logo12.png" alt="Logo" />
         <motion.h2 initial={false} animate={{ opacity: collapsed ? 0 : 1 }} transition={{ duration: 0.2 }}>
-          Smart<span>DocX</span>
+          Auto<span>PrintX</span>
           {/* {dashboardData && (
             <pre>{JSON.stringify(dashboardData, null, 2)}</pre>
           )} */}
@@ -73,8 +73,8 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
       <div className="sidebar-user">
         <img src="https://placehold.co/100x100/0a2463/white?text=A" alt="Admin User" />
         <motion.div initial={false} animate={{ opacity: collapsed ? 0 : 1 }} transition={{ duration: 0.2 }}>
-          <h4>{dashboardData && dashboardData.user ? dashboardData.user.username : "Loading..."}</h4>
-          <p>Shop Owner</p>
+          <h4>{dashboardData && dashboardData.user ? dashboardData.user.owner_name : "Loading..."}</h4>
+          <p>{dashboardData && dashboardData.user ? dashboardData.user.username : "Loading..."}</p>
         </motion.div>
       </div>
 

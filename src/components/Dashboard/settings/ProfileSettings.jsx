@@ -2,6 +2,7 @@ import { motion } from "framer-motion"
 import { Save, Camera } from "lucide-react"
 import AutoPrintXPoster from '../QRCodeGenerator'
 import { getQRData } from "../../../global"
+import { useEffect } from "react"
 
 const ProfileSettings = ({
     settings,
@@ -36,7 +37,7 @@ const ProfileSettings = ({
             const qrData = getQRData()
             return {
                 unique_url: qrData?.unique_url || "",
-                username: qrData?.username || firstName
+                username: qrData?.owner_name.slice(0,18) || firstName
             }
         } catch (error) {
             console.error("Error getting QR data:", error)

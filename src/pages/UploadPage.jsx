@@ -150,7 +150,7 @@ export default function PrintOrderForm() {
       <header className="header">
         <nav className="navbar">
           <div className="logo">
-            <h1>Smart<span>DocX</span></h1>
+            <h1>Auto<span>PrintX</span></h1>
           </div>
           <Link to="/" className="back-link">
             <ArrowLeft size={16} />

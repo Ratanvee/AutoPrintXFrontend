@@ -4,9 +4,10 @@ import html2canvas from "html2canvas";
 
 const AutoPrintXPoster = ({
     value = "https://autoprintx.com/pay",
-    ownerName = "RATANVEER",
-    logo = "/AutoPrintXLogo.png",      // Place in public/
-    lensLogo = "/google-lens.svg",     // Place in public/
+    ownerName = "",
+    // logo = "/AutoPrintXLogo.png",      // Place in public/
+    logo = "/logopng2.png",      // Place in public/
+    lensLogo = "/google-lens.png",     // Place in public/
 }) => {
     const qrRef = useRef(null);
     const [qrRendered, setQrRendered] = useState(false);
