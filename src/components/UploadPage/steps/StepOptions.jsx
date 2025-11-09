@@ -22,7 +22,7 @@ export default function StepOptions({
             <h2>Choose Printing Options</h2>
             <div className="options-container">
                 <div className="options-form">
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label htmlFor="paperSize">Paper Size</label>
                         <select
                             id="paperSize"
@@ -34,9 +34,9 @@ export default function StepOptions({
                             <option value="legal">Legal (8.5 × 14 in)</option>
                             <option value="a3">A3 (297 × 420 mm)</option>
                         </select>
-                    </div>
+                    </div> */}
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label htmlFor="paperType">Paper Type</label>
                         <select
                             id="paperType"
@@ -48,7 +48,7 @@ export default function StepOptions({
                             <option value="glossy">Glossy (120 gsm)</option>
                             <option value="matte">Matte (120 gsm)</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <div className="form-group">
                         <label htmlFor="printColor">Print Color</label>
@@ -62,7 +62,7 @@ export default function StepOptions({
                         </select>
                     </div>
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label htmlFor="printSides">Print Sides</label>
                         <select
                             id="printSides"
@@ -72,9 +72,9 @@ export default function StepOptions({
                             <option value="single">Single-sided</option>
                             <option value="double">Double-sided</option>
                         </select>
-                    </div>
+                    </div> */}
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label htmlFor="binding">Binding</label>
                         <select
                             id="binding"
@@ -86,7 +86,7 @@ export default function StepOptions({
                             <option value="spiral">Spiral Binding</option>
                             <option value="hardcover">Hardcover Binding</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <div className="form-group">
                         <label htmlFor="copies">Number of Copies</label>

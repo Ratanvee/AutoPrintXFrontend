@@ -1002,6 +1002,11 @@
   border-radius: 6px;
 }
 
+/* trash button in recent order table  */
+.btn-trash:focus{
+  outline: none;
+}
+
 .switch {
   position: relative;
   display: inline-block;

@@ -77,7 +77,7 @@ export default function StepPayment({
                         disabled
                     >
                         <CreditCard size={16} />
-                        RazorPay
+                        Online
                     </button>
                     <button
                         className={`payment-tab ${paymentMethod === "cash" ? "active" : ""}`}
@@ -87,27 +87,27 @@ export default function StepPayment({
                         <CreditCard size={16} />
                         Cash
                     </button>
-                    <button
+                    {/* <button
                         className={`payment-tab ${paymentMethod === "card" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("card")}
                         disabled
                     >
                         Credit Card
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                         className={`payment-tab ${paymentMethod === "paypal" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("paypal")}
                         disabled
                     >
                         PayPal
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                         className={`payment-tab ${paymentMethod === "bank" ? "active" : ""}`}
                         onClick={() => setPaymentMethod("bank")}
                         disabled
                     >
                         Bank Transfer
-                    </button>
+                    </button> */}
                 </div>
 
                 <AnimatePresence mode="wait">
@@ -283,7 +283,7 @@ export default function StepPayment({
                     className="btn-primary"
                     loadingText="Submitting Order ..."
                     // type="submit"
-                    style={{ marginTop: '10px' }}
+                    // style={{ marginTop: '10px' }}
                     onClick={handleCompleteOrder}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

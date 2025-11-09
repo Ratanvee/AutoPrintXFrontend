@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const AnimatedTrashButton = ({
     onClick,
     title = "Delete",
-    className = "",
+    className = "btn-trash",
     disabled = false,
     size = 16
 }) => {

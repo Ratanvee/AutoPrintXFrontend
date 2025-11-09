@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 import { Upload, X, FileText, ImageIcon, File, ArrowRight } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf.mjs";
+import toast from "react-hot-toast";
 
 GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.mjs",
@@ -74,6 +75,11 @@ export default function StepUpload({ uploadedFiles, setUploadedFiles, nextStep }
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     };
+
+    if (uploadedFiles.length > 1){
+        toast.error("You can only upload file once at a time !!")
+        // removeFile(-1);
+    }
 
     return (
         <motion.div

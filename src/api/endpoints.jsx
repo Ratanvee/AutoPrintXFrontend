@@ -15,6 +15,7 @@ const SIGNUP_URL = `${API_URL}register/`
 const sendOTPURL = `${API_URL}send-otp/`;
 const verifyOTPURL = `${API_URL}verify-otp/`;
 const resetPasswordURL = `${API_URL}reset-password/`;
+const RatingURL = `${API_URL}cutomer-rating`
 
 axios.defaults.withCredentials = true;
 
@@ -183,7 +184,7 @@ export const UserToUploadDataAPI = async (uniqueUrl) => {
   try {
     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, {
       withCredentials: true,
-      timeout: 10000, // 10 second timeout
+      timeout: 60000, // 10 second timeout
     });
 
     // Check if response has an error field
@@ -545,3 +546,23 @@ export const resetPasswordAPI = async (emailOrPhone, newPassword) => {
     };
   }
 };
+
+export const CustomerRatingAPI = async (ratevalue, comment) => {
+  try{
+    toast.success("Thanks for Rating 😊")
+
+    const response = await fetch(CREATEORDERS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+      // body: rate,
+      rating: ratevalue,
+      comment: comment,
+    });
+    const data = await response.json();
+    toast.success("Thanks for Rating 😊")
+
+  } catch (error) {
+    console.error("someing wrong : ", error)
+  }
+}

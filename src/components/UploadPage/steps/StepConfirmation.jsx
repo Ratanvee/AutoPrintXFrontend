@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
+import HoverRating from "../../RatingWeb/Rating";
+import RatingDialog from "../../RatingWeb/Rating";
+import { Button } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+// import RatingDialog from './RatingDialog';
 
 export default function StepConfirmation({ orderId, calculateTotal, paymentMethod, uniqueID }) {
+
+    const [openRatingDialog, setOpenRatingDialog] = useState(false);
+
+    const handleOpenRatingDialog = () => {
+        setOpenRatingDialog(true);
+    };
+
+    const handleCloseRatingDialog = () => {
+        setOpenRatingDialog(false);
+    };
+
     return (
         <motion.div
             key="step4"
@@ -49,26 +65,66 @@ export default function StepConfirmation({ orderId, calculateTotal, paymentMetho
                     </div>
                     <div className="order-detail">
                         <span>Estimated Completion:</span>
-                        <span>{new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
+                        {/* <span>{new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString()}</span> */}
+                        <span>
+                            {new Date(Date.now() + 5 * 60 * 1000).toLocaleString([], {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </span>
                     </div>
                 </div>
 
                 <p className="confirmation-message">
-                    We've sent a confirmation email to your registered email address. You can track your order status in
-                    the dashboard.
+                    Please take a screenshot of this page to present to the owner or staff when you arrive to receive your order. This screenshot serves as your official order receipt and tracking reference.
                 </p>
+
+
 
                 <div className="confirmation-buttons">
                     <Link to="/" className="btn-secondary">
                         Back to Home
                     </Link>
-                    <Link to='/' className="btn-primary">
+                    {/* <Link to='/' className="btn-primary">
                         Again Order
-                    </Link>
-                    {/* <button onClick={window.location.reload()} className="btn-primary">
+                    </Link> */}
+                    <button onClick={() => window.location.reload()} className="btn-primary">
                         Order Again
-                    </button> */}
+                    </button>
                 </div>
+            </div>
+            <div>
+                {/* Your other components */}
+
+                {/* Button to open the rating dialog */}
+                <Button
+                    variant="contained"
+                    startIcon={<StarIcon />}
+                    onClick={handleOpenRatingDialog}
+                    sx={{
+                        backgroundColor: '#003d5c',
+                        color: '#ffffff',
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                        fontWeight: 500,
+                        px: 3,
+                        py: 1.5,
+                        borderRadius: 1,
+                        '&:hover': {
+                            backgroundColor: '#00293d',
+                        },
+                    }}
+                >
+                    Rate Us
+                </Button>
+
+                {/* Rating Dialog */}
+                <RatingDialog
+                    open={openRatingDialog}
+                    onClose={handleCloseRatingDialog}
+                />
             </div>
         </motion.div>
     );
