@@ -119,9 +119,9 @@ const handleError = (error, options = {}) => {
 class SmartPoller {
   constructor(fetchFunction, options = {}) {
     this.fetchFunction = fetchFunction;
-    this.interval = options.interval || 3000; // Default 3 seconds
+    this.interval = options.interval || 6000; // Default 3 seconds
     this.maxInterval = options.maxInterval || 30000; // Max 30 seconds
-    this.minInterval = options.minInterval || 3000; // Min 3 seconds
+    this.minInterval = options.minInterval || 6000; // Min 3 seconds
     this.noChangeThreshold = options.noChangeThreshold || 5; // Slow down after 5 no-changes
 
     this.currentInterval = this.interval;
@@ -281,9 +281,11 @@ export const logout = async () => {
 export const recentOrders = async () => {
   try {
     const controller = createRequest('recentOrders');
-    const response = await axios.get(ENDPOINTS.RECENT_ORDERS, {
-      signal: controller.signal,
-    });
+    const response = await axios.get(ENDPOINTS.RECENT_ORDERS,
+      {
+        signal: controller.signal,
+      }
+    );
 
     activeRequests.delete('recentOrders');
     return response.data;
@@ -401,7 +403,7 @@ export const DashboardSettings = async () => {
       toast.error(response.data.error);
       return null;
     }
-    
+
 
     return response.data;
 

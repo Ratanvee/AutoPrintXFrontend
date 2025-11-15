@@ -56,12 +56,107 @@ export default function PrintOrderForm() {
   };
 
   // Handle final submission
+  
+  // const handleFinalSubmit = async ({ paymentMethod, transactionId, cashPayerName }) => {
+  //   setLoading(true);
+
+  //   // Show loading toast
+  //   const loadingToast = toast.loading('Submitting your order...');
+
+  //   const generatedOrderId = generateOrderId();
+  //   setOrderId(generatedOrderId);
+
+  //   try {
+  //     // Validation checks
+  //     if (uploadedFiles.length === 0) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('Please upload at least one file');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     if (paymentMethod === 'upi' && !transactionId) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('Transaction ID is required for UPI payments');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     if (paymentMethod === 'cash' && !cashPayerName) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('Please enter your name for cash payment');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     const formData = new FormData();
+
+  //     // Add files
+  //     uploadedFiles.forEach((file, index) => {
+  //       formData.append('FileUpload', file.file);
+  //     });
+
+  //     // Add form data
+  //     formData.append('PaperSize', printOptions.paperSize);
+  //     formData.append('PaperType', printOptions.paperType);
+  //     formData.append('PrintColor', printOptions.printColor);
+  //     formData.append('PrintSide', printOptions.printSides);
+  //     formData.append('Binding', printOptions.binding);
+  //     formData.append('NumberOfCopies', printOptions.copies);
+  //     formData.append('PaymentAmount', amount);
+  //     formData.append('NoOfPages', uploadedFiles.reduce((acc, file) => acc + (file.pages || 0), 0));
+  //     formData.append('PaymentStatus', transactionId ? 1 : 0);
+  //     formData.append('Transaction_id', transactionId || "");
+  //     formData.append('CustomerName', cashPayerName || "");
+  //     formData.append('OrderId', generatedOrderId);
+  //     formData.append('PaymentMethod', paymentMethod);
+
+  //     // Upload data
+  //     const data = await UploadDataAPI(formData, uniqueUrl);
+
+  //     // Dismiss all loading toasts
+  //     toast.dismiss(loadingToast);
+  //     uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
+
+  //     if (data && !data.error) {
+  //       toast.success(`Order submitted successfully! Order ID: ${generatedOrderId}`, {
+  //         duration: 5000,
+  //         position: 'top-center',
+  //         style: {
+  //           background: '#10b981',
+  //           color: '#fff',
+  //           fontWeight: 'bold',
+  //         },
+  //       });
+  //       nextStep();
+  //     } else {
+  //       throw new Error(data?.error || 'Failed to submit order');
+  //     }
+  //   } catch (error) {
+  //     console.error("Order submission failed:", error);
+  //     toast.dismiss(loadingToast);
+  //     uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
+
+  //     const errorMessage = error.response?.data?.error ||
+  //       error.response?.data?.details ||
+  //       error.message ||
+  //       'Failed to submit order. Please try again.';
+
+  //     toast.error(` ${errorMessage}`, {
+  //       duration: 6000,
+  //       position: 'top-center',
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Update the handleFinalSubmit function in PrintOrderForm.jsx
+
   const handleFinalSubmit = async ({ paymentMethod, transactionId, cashPayerName }) => {
     setLoading(true);
 
-    // Show loading toast
     const loadingToast = toast.loading('Submitting your order...');
-
     const generatedOrderId = generateOrderId();
     setOrderId(generatedOrderId);
 
@@ -70,6 +165,13 @@ export default function PrintOrderForm() {
       if (uploadedFiles.length === 0) {
         toast.dismiss(loadingToast);
         toast.error('Please upload at least one file');
+        setLoading(false);
+        return;
+      }
+
+      if (uploadedFiles.length > 5) {
+        toast.dismiss(loadingToast);
+        toast.error('You can only upload up to 5 files at once');
         setLoading(false);
         return;
       }
@@ -90,10 +192,37 @@ export default function PrintOrderForm() {
 
       const formData = new FormData();
 
-      // Add files
+      // ✅ Build page counts object
+      const pageCounts = {};
+      let totalPages = 0;
+
+      console.log('📄 Building page counts from uploadedFiles:', uploadedFiles);
+
+      // Add ALL files with page count tracking
       uploadedFiles.forEach((file, index) => {
         formData.append('FileUpload', file.file);
+
+        // Track page count for this file
+        const pageCount = file.pages || 0;
+        pageCounts[file.name] = pageCount;
+        totalPages += pageCount;
+
+        console.log(`📄 File ${index + 1}: ${file.name} - ${pageCount} pages`);
+
+        // Show individual file upload progress
+        toast.loading(`Uploading ${file.name}...`, {
+          id: `file-${index}`,
+          duration: Infinity
+        });
       });
+
+      // ✅ Log the page counts object before sending
+      console.log('📦 Page counts object:', pageCounts);
+      console.log('📦 Total pages:', totalPages);
+      console.log('📦 Page counts JSON:', JSON.stringify(pageCounts));
+
+      // ✅ Add page counts as JSON string
+      formData.append('FilePagesCount', JSON.stringify(pageCounts));
 
       // Add form data
       formData.append('PaperSize', printOptions.paperSize);
@@ -103,12 +232,25 @@ export default function PrintOrderForm() {
       formData.append('Binding', printOptions.binding);
       formData.append('NumberOfCopies', printOptions.copies);
       formData.append('PaymentAmount', amount);
-      formData.append('NoOfPages', uploadedFiles.reduce((acc, file) => acc + (file.pages || 0), 0));
+
+      // ✅ Use calculated total pages
+      formData.append('NoOfPages', totalPages);
+
       formData.append('PaymentStatus', transactionId ? 1 : 0);
       formData.append('Transaction_id', transactionId || "");
       formData.append('CustomerName', cashPayerName || "");
       formData.append('OrderId', generatedOrderId);
       formData.append('PaymentMethod', paymentMethod);
+
+      // 🔍 DEBUG: Log all FormData entries
+      console.log('📦 FormData contents:');
+      for (let pair of formData.entries()) {
+        if (pair[0] !== 'FileUpload') { // Don't log file objects
+          console.log(`   ${pair[0]}: ${pair[1]}`);
+        } else {
+          console.log(`   ${pair[0]}: [File object]`);
+        }
+      }
 
       // Upload data
       const data = await UploadDataAPI(formData, uniqueUrl);
@@ -118,21 +260,29 @@ export default function PrintOrderForm() {
       uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
 
       if (data && !data.error) {
-        toast.success(`Order submitted successfully! Order ID: ${generatedOrderId}`, {
-          duration: 5000,
-          position: 'top-center',
-          style: {
-            background: '#10b981',
-            color: '#fff',
-            fontWeight: 'bold',
-          },
-        });
+        const fileCount = data.files_uploaded || uploadedFiles.length;
+        console.log('✅ Upload successful:', data);
+
+        toast.success(
+          `Order submitted successfully! 
+        Order ID: ${generatedOrderId}
+        Files: ${fileCount} (${totalPages} pages total)`,
+          {
+            duration: 6000,
+            position: 'top-center',
+            style: {
+              background: '#10b981',
+              color: '#fff',
+              fontWeight: 'bold',
+            },
+          }
+        );
         nextStep();
       } else {
         throw new Error(data?.error || 'Failed to submit order');
       }
     } catch (error) {
-      console.error("Order submission failed:", error);
+      console.error("❌ Order submission failed:", error);
       toast.dismiss(loadingToast);
       uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
 
@@ -141,7 +291,7 @@ export default function PrintOrderForm() {
         error.message ||
         'Failed to submit order. Please try again.';
 
-      toast.error(` ${errorMessage}`, {
+      toast.error(`${errorMessage}`, {
         duration: 6000,
         position: 'top-center',
       });

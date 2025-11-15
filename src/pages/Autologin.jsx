@@ -7,7 +7,7 @@ function Autologin() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("🔥 Autologin page loaded");
+        console.log("Autologin page loaded");
         console.log("URL =", window.location.href);
         // console.log("Token param =", tokenParam);
 
