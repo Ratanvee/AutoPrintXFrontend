@@ -828,7 +828,7 @@ const RecentOrders = ({ selectedPrinter }) => {
         setTimeout(async () => {
           await queryClient.invalidateQueries(['recentOrders'])
           console.log('✓ Refreshed orders after print')
-        }, 2000)
+        }, 500)
       } else {
         toast.error(`❌ Print failed: ${response?.error || 'Unknown error'}`, { id: printingToast })
       }
