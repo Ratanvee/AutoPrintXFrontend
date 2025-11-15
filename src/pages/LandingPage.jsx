@@ -231,22 +231,22 @@ const LandingPage = () => {
                         {[
                             {
                                 title: "Basic",
-                                price: "$0.10",
-                                period: "/page",
+                                price: "10%",
+                                period: "/order",
                                 features: ["Black & White Printing", "Standard Paper", "No Binding", "Self Pickup"],
                                 popular: false,
                             },
                             {
                                 title: "Standard",
-                                price: "$0.25",
-                                period: "/page",
+                                price: "20%",
+                                period: "/order",
                                 features: ["Color Printing", "Premium Paper", "Basic Binding", "Local Delivery"],
                                 popular: true,
                             },
                             {
                                 title: "Premium",
-                                price: "$0.40",
-                                period: "/page",
+                                price: "25%",
+                                period: "/order",
                                 features: ["High-Quality Color", "Premium Glossy Paper", "Professional Binding", "Express Delivery"],
                                 popular: false,
                             },

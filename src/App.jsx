@@ -9,11 +9,11 @@ import PrintOrderForm from "./pages/UploadPage";
 import { Toaster } from 'react-hot-toast';
 // import PrintOrderForm from "./pages/PrintOrderForm";
 
+import Autologin from "./pages/Autologin";
 // In your main.jsx or App.jsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
-
 
 
 
@@ -53,6 +53,7 @@ function App() {
             {/* ✅ Public Routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/*" element={<MainSignInUpPage />} />
+            <Route path="/autologin" element={<Autologin />} />
             <Route path="/upload/:slug" element={<PrintOrderForm />} />
 
 

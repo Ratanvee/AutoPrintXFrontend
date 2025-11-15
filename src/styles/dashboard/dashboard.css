@@ -14,8 +14,11 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
+  transition: width 0.2s ease;
   flex-shrink: 0;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
 }
 
 .sidebar.collapsed {
@@ -25,7 +28,7 @@
 .sidebar-header {
   margin-bottom: 30px;
   text-align: center;
-  overflow: hidden;
+  /* overflow: hidden; */
   display: flex;
   align-items: center;
 }
@@ -35,7 +38,7 @@
   font-size: 24px;
   font-weight: 700;
   white-space: nowrap;
-  transition: opacity 0.2s ease;
+  /* transition: opacity 0.2s ease; */
 }
 
 .sidebar.collapsed .sidebar-header h2 {
@@ -55,7 +58,7 @@
   padding: 7px;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.05);
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .sidebar-user img {
@@ -155,9 +158,9 @@
 .sidebar-footer {
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: auto;
-  position: fixed;
-  bottom: 20px;
+  /* margin-top: auto; */
+  /* position: fixed; */
+  /* bottom: 20px; */
 }
 
 .sidebar-footer a {
@@ -200,17 +203,18 @@
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
+  margin-left: 250px;
 }
 
 .dashboard-main.expanded {
-  margin-left: 0;
+  margin-left: 80px;
   /* No margin when sidebar is collapsed */
 }
 
 /* Dashboard Header */
 .dashboard-header {
   background-color: #ffffff;
-  padding: 0px 30px;
+  padding: 15px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
@@ -788,7 +792,7 @@
 
 .chart-container {
   position: relative;
-  width: 100%;
+  width: 99%;
   /* height: 300px; Default height for charts */
 }
 
@@ -2091,7 +2095,7 @@ input:checked+.slider:before {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  overflow: hidden;
+  /* overflow: hidden; */
   border: 3px solid #3498db;
   background-color: #f0f2f5;
   display: flex;
@@ -2371,7 +2375,7 @@ input:checked+.slider:before {
   }
 
   .dashboard-main.expanded {
-    margin-left: 60px;
+    margin-left: 250px;
   }
 
   .dashboard-header {

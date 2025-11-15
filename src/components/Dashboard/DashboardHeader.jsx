@@ -166,8 +166,8 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
 
       <div className="header-actions">
         {/* Printer select box */}
-        <div className="form-group">
-          <label htmlFor="printerName">Printer name</label>
+        <div className="form-group1">
+          {/* <label htmlFor="printerName">Printer name</label> */}
           <select
             id="printerName"
             className="status-filter"
