@@ -366,7 +366,7 @@ export const fetchOrdersAPI = async (search, status, from, to, page, per_page) =
 /**
  * Get recent activity
  */
-export const recentActivity = async (limit = 4) => {
+export const recentActivity = async (limit = 1000) => {
   try {
     const controller = createRequest('recentActivity');
     const response = await axios.get(`${ENDPOINTS.RECENT_ACTIVITY}?limit=${limit}`, {

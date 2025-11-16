@@ -42,6 +42,7 @@
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.3.8",
     "react-hot-toast": "^2.6.0",
+    "react-loading-indicators": "^1.0.1",
     "react-router-dom": "^7.9.1",
     "react-toastify": "^11.0.5",
     "rsuite": "^5.83.3",

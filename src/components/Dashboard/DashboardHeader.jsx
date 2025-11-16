@@ -12,7 +12,7 @@ import { setSelectedPrinterr } from "../../global";
 import { printDocument, getPrinters, checkPrinterAgentStatus } from "./api/printerAgentapi"
 
 
-const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotifications, unreadCount }) => {
+const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotifications, unreadCount, dashboardData }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [status, setStatus] = useState("Checking...");
   const [color, setColor] = useState("gray");
@@ -24,8 +24,6 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   // Check printer agent status
   const checkStatus = async () => {
     try {
-      // const response = await fetch("http://localhost:5050/status");
-      // const data = await response.json();
       const data = await checkPrinterAgentStatus();
       if (data.status === "online") {
         setStatus("🟢 Active");
@@ -223,7 +221,9 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
         </motion.div>
 
         <motion.div className="profile" whileHover={{ scale: 1.05 }}>
-          <img src="https://placehold.co/100x100/0a2463/white?text=A" alt="Admin User" />
+          {/* <img src="https://placehold.co/100x100/0a2463/white?text=A" alt="Admin User" /> */}
+          <img src={dashboardData && dashboardData.user ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="Admin User" />
+
         </motion.div>
       </div>
     </header>

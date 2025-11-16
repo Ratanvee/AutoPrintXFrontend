@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import {
   ShoppingCart,
@@ -17,26 +17,15 @@ import InteractiveChart from "./InteractiveChart"
 import { dashboardOverview, fetchChartDataAPI, recentActivity as fetchRecentActivity } from "./api/endpoints"
 import { useQuery } from '@tanstack/react-query'
 
-const DashboardOverview = () => {
+// ✅ Accept recentActivities as prop from parent Dashboard component
+const DashboardOverview = ({ recentActivities = [], showNotifications, setShowNotifications }) => {
   const [filter, setFilter] = useState("day")
   const [timeRange, setTimeRange] = useState("7d")
 
-  // ✅ Fetch recent activity - keeps previous data while refetching
-  const { data: recentActivity = [] } = useQuery({
-    queryKey: ['recentActivity'],
-    queryFn: async () => {
-      const data = await fetchRecentActivity(4)
-      return data?.activities || []
-    },
-    refetchInterval: 5000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    placeholderData: (previousData) => previousData, // ✅ Prevents refresh feeling
-    staleTime: 3000,
-    onError: (err) => {
-      console.error("Error fetching recent activity:", err)
-    }
-  })
+  // ✅ Use only the first 4 activities for dashboard overview
+  const limitedActivities = useMemo(() => {
+    return recentActivities.slice(0, 4)
+  }, [recentActivities])
 
   // ✅ Fetch dashboard overview - NO page blink
   const {
@@ -51,7 +40,7 @@ const DashboardOverview = () => {
     refetchInterval: 4000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    placeholderData: (previousData) => previousData, // ✅ Prevents refresh feeling
+    placeholderData: (previousData) => previousData,
     staleTime: 3000,
     onError: (err) => {
       console.error("Error fetching dashboard overview:", err)
@@ -68,7 +57,7 @@ const DashboardOverview = () => {
     refetchInterval: 5000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    placeholderData: (previousData) => previousData, // ✅ Prevents refresh feeling
+    placeholderData: (previousData) => previousData,
     staleTime: 3000,
     onError: (err) => {
       console.error("Error fetching chart data:", err)
@@ -237,14 +226,14 @@ const DashboardOverview = () => {
         <motion.div className="activity-section" variants={itemVariants}>
           <div className="section-header">
             <h3>Recent Activity</h3>
-            <button className="view-all">View All</button>
+            <button onClick={() => setShowNotifications(!showNotifications)} className="view-all">View All</button>
           </div>
 
           <div className="activity-list">
-            {recentActivity.length === 0 ? (
+            {limitedActivities.length === 0 ? (
               <p>No recent activity</p>
             ) : (
-              recentActivity.map((activity) => (
+              limitedActivities.map((activity) => (
                 <motion.div
                   key={activity.id}
                   className="activity-item"

@@ -5,11 +5,7 @@ import { BarChart3, ShoppingCart, Users, Package, FileText, Settings, LogOut } f
 import { get_dashboard, logout } from "./api/endpoints";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import { setQRData } from "../../global";
-import toast from "react-hot-toast";
-
-const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
+const Sidebar = ({ collapsed, activeSection, setActiveSection, dashboardData }) => {
   const location = useLocation()
   const navigate = useNavigate();
 
@@ -22,35 +18,10 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
     { id: "settings", label: "Settings", icon: Settings, path: "/dashboard/settings" },
   ]
 
-
-  const [dashboardData, setDashboardData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await get_dashboard();
-      setDashboardData(data);
-      setQRData(data.user);
-      console.log("this is check modfied or not : ", data.user)
-      if (!data.user.is_modified){
-        toast.error("Please Update your info First !!")
-          // < Navigate to = "/target-page"/>
-        navigate('/dashboard/settings');
-      }
-    };
-
-    fetchData();
-  }, [get_dashboard]);
-
   const handleLogout = () => {
     logout();
     // navigate("/login");
   };
-
-  // const logout = document.getElementById("logout");
-  // if (logout) {
-  //   logout.addEventListener("click", handleLogout);
-  //   console.log("Logout event listener added");
-  // }
 
 
   return (
@@ -71,7 +42,7 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection }) => {
       </div>
 
       <div className="sidebar-user">
-        <img src="https://placehold.co/100x100/0a2463/white?text=A" alt="Admin User" />
+        <img src={dashboardData && dashboardData.user ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="Admin User" />
         <motion.div initial={false} animate={{ opacity: collapsed ? 0 : 1 }} transition={{ duration: 0.2 }}>
           <h4>{dashboardData && dashboardData.user ? dashboardData.user.owner_name : "Loading..."}</h4>
           <p>{dashboardData && dashboardData.user ? dashboardData.user.username : "Loading..."}</p>

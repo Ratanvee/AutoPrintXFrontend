@@ -42,9 +42,9 @@ export default function PrintOrderForm() {
   const calculateTotal = () => {
     const basePrice = printOptions.printColor === "bw" ? 5 : 10;
     const paperCost = printOptions.paperType === "premium" ? 2 : 0;
-    const bindingCost = printOptions.binding === "spiral" ? 3 : printOptions.binding === "hardcover" ? 8 : 0;
+    const bindingCost = printOptions.binding === "spiral" ? 10 : printOptions.binding === "hardcover" ? 20 : 0;
     const pages = uploadedFiles.reduce((acc, file) => acc + (file.pages || 0), 0);
-    return ((basePrice * pages + paperCost + bindingCost) * printOptions.copies).toFixed(2);
+    return (((basePrice * pages + paperCost) * printOptions.copies) + (bindingCost * uploadedFiles.length)).toFixed(2);
   };
 
   // Generate order ID
@@ -54,102 +54,6 @@ export default function PrintOrderForm() {
     const randomPart = Math.random().toString(36).substring(6, 8).toUpperCase();
     return `ORD-${timestamp}-${randomPart}`;
   };
-
-  // Handle final submission
-  
-  // const handleFinalSubmit = async ({ paymentMethod, transactionId, cashPayerName }) => {
-  //   setLoading(true);
-
-  //   // Show loading toast
-  //   const loadingToast = toast.loading('Submitting your order...');
-
-  //   const generatedOrderId = generateOrderId();
-  //   setOrderId(generatedOrderId);
-
-  //   try {
-  //     // Validation checks
-  //     if (uploadedFiles.length === 0) {
-  //       toast.dismiss(loadingToast);
-  //       toast.error('Please upload at least one file');
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     if (paymentMethod === 'upi' && !transactionId) {
-  //       toast.dismiss(loadingToast);
-  //       toast.error('Transaction ID is required for UPI payments');
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     if (paymentMethod === 'cash' && !cashPayerName) {
-  //       toast.dismiss(loadingToast);
-  //       toast.error('Please enter your name for cash payment');
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     const formData = new FormData();
-
-  //     // Add files
-  //     uploadedFiles.forEach((file, index) => {
-  //       formData.append('FileUpload', file.file);
-  //     });
-
-  //     // Add form data
-  //     formData.append('PaperSize', printOptions.paperSize);
-  //     formData.append('PaperType', printOptions.paperType);
-  //     formData.append('PrintColor', printOptions.printColor);
-  //     formData.append('PrintSide', printOptions.printSides);
-  //     formData.append('Binding', printOptions.binding);
-  //     formData.append('NumberOfCopies', printOptions.copies);
-  //     formData.append('PaymentAmount', amount);
-  //     formData.append('NoOfPages', uploadedFiles.reduce((acc, file) => acc + (file.pages || 0), 0));
-  //     formData.append('PaymentStatus', transactionId ? 1 : 0);
-  //     formData.append('Transaction_id', transactionId || "");
-  //     formData.append('CustomerName', cashPayerName || "");
-  //     formData.append('OrderId', generatedOrderId);
-  //     formData.append('PaymentMethod', paymentMethod);
-
-  //     // Upload data
-  //     const data = await UploadDataAPI(formData, uniqueUrl);
-
-  //     // Dismiss all loading toasts
-  //     toast.dismiss(loadingToast);
-  //     uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
-
-  //     if (data && !data.error) {
-  //       toast.success(`Order submitted successfully! Order ID: ${generatedOrderId}`, {
-  //         duration: 5000,
-  //         position: 'top-center',
-  //         style: {
-  //           background: '#10b981',
-  //           color: '#fff',
-  //           fontWeight: 'bold',
-  //         },
-  //       });
-  //       nextStep();
-  //     } else {
-  //       throw new Error(data?.error || 'Failed to submit order');
-  //     }
-  //   } catch (error) {
-  //     console.error("Order submission failed:", error);
-  //     toast.dismiss(loadingToast);
-  //     uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
-
-  //     const errorMessage = error.response?.data?.error ||
-  //       error.response?.data?.details ||
-  //       error.message ||
-  //       'Failed to submit order. Please try again.';
-
-  //     toast.error(` ${errorMessage}`, {
-  //       duration: 6000,
-  //       position: 'top-center',
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   // Update the handleFinalSubmit function in PrintOrderForm.jsx
 
