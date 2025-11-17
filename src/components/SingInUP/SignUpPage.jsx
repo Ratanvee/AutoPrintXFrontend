@@ -7,6 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import OTPInput from "./components/OTPInput";
 import LoadingButton from "./components/LoadingButton";
 import { validatePassword, isValidEmail } from "./utils/authUtils";
+import { useNavigate } from "react-router-dom";
 
 function SignUpForm() {
   const [state, setState] = useState({
@@ -29,6 +30,8 @@ function SignUpForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const nav = useNavigate();
 
   const handleChange = (evt) => {
     setState({ ...state, [evt.target.name]: evt.target.value });
@@ -129,6 +132,7 @@ function SignUpForm() {
         setSignupStep(1);
         setIsEmailVerified(false);
         setOtp(["", "", "", ""]);
+        nav("/login");
       } else {
         toast.error(data?.error || "Registration failed");
       }
