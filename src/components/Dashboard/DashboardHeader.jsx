@@ -200,7 +200,10 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
 
         <motion.div className="profile" whileHover={{ scale: 1.05 }}>
           {/* <img src="https://placehold.co/100x100/0a2463/white?text=A" alt="Admin User" /> */}
-          <img src={dashboardData && dashboardData.user ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="Admin User" />
+          <img src={dashboardData && dashboardData.user ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="" onError={(e) => {
+            e.target.onerror = null
+            e.target.src = `https://placehold.co/120x120/4f46e5/ffffff?text=U`
+          }} />
 
         </motion.div>
       </div>
