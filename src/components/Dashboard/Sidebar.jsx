@@ -42,10 +42,7 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection, dashboardData }) 
       </div>
 
       <div className="sidebar-user">
-        <img src={dashboardData && dashboardData.user ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="" onError={(e) => {
-          e.target.onerror = null
-          e.target.src = `https://placehold.co/120x120/4f46e5/ffffff?text=U`
-        }} />
+        <img src={dashboardData && dashboardData.user.shop_image ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="" />
         <motion.div initial={false} animate={{ opacity: collapsed ? 0 : 1 }} transition={{ duration: 0.2 }}>
           <h4>{dashboardData && dashboardData.user ? dashboardData.user.owner_name : "Loading..."}</h4>
           <p>{dashboardData && dashboardData.user ? dashboardData.user.username : "Loading..."}</p>
