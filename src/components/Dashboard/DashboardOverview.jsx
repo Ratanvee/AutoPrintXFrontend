@@ -173,7 +173,7 @@ const DashboardOverview = ({ recentActivities = [], showNotifications, setShowNo
         <StatCard
           icon={IndianRupee}
           title="Total Revenue"
-          value={`$${dashboardStats.revenue.overall}`}
+          value={`₹${dashboardStats.revenue.overall}`}
           change={Math.abs(dashboardStats.revenue.percent_change)}
           trend={dashboardStats.revenue.percent_change >= 0 ? "up" : "down"}
           period="from yesterday"
