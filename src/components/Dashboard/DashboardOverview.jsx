@@ -9,7 +9,8 @@ import {
   Printer,
   Eye,
   Download,
-  MoreHorizontal
+  MoreHorizontal,
+  IndianRupee
 } from "lucide-react"
 import StatCard from "./StatCard"
 import RecentOrders from "./RecentOrders"
@@ -170,7 +171,7 @@ const DashboardOverview = ({ recentActivities = [], showNotifications, setShowNo
           period="from yesterday"
         />
         <StatCard
-          icon={DollarSign}
+          icon={IndianRupee}
           title="Total Revenue"
           value={`$${dashboardStats.revenue.overall}`}
           change={Math.abs(dashboardStats.revenue.percent_change)}
