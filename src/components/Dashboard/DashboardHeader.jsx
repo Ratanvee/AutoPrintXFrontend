@@ -98,7 +98,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
 
     // 1. Construct the Google Drive direct download URL.
     // The 'uc?export=download' format forces a direct file download.
-    const downloadUrl = `${File_download_Link}${GOOGLE_DRIVE_FILE_ID}`;
+    const downloadUrl = `${File_download_Link}`;
 
     try {
       // 2. Create a temporary anchor element (<a>)
