@@ -88,7 +88,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
 
   // ✅ The specific File ID extracted from your provided URL
   const GOOGLE_DRIVE_FILE_ID = import.meta.env.VITE_GOOGLE_DRIVE_FILE_ID;
-  const FILENAME = "mysetup.exe"; // The target file name
+  const FILENAME = "AutoPrintXAgent.exe"; // The target file name
   const File_download_Link = import.meta.env.VITE_Google_drive_download_link;
 
   // The core function to initiate the download
@@ -100,29 +100,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
     // The 'uc?export=download' format forces a direct file download.
     const downloadUrl = `${File_download_Link}`;
 
-    try {
-      // 2. Create a temporary anchor element (<a>)
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = FILENAME; // Suggest the file name
-
-      // 3. Append and click the link to trigger the download
-      document.body.appendChild(link);
-      link.click();
-
-      // 4. Clean up
-      document.body.removeChild(link);
-
-      setMessage(`Download of ${FILENAME} started! Please check your browser's download manager.`);
-    } catch (error) {
-      console.error("Download failed:", error);
-      setMessage("An unexpected error occurred while attempting the download.");
-    } finally {
-      // Simulate download initiation time
-      setTimeout(() => {
-        setIsDownloading(false);
-      }, 1500);
-    }
+    window.open(downloadUrl, "_blank");
   };
 
 
