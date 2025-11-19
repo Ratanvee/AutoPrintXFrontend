@@ -54,7 +54,7 @@ export const login = async (username, password) => {
       // Use the status code or the error message from the server response
       const status = error.response.status;
       errorMessage = `Request failed: HTTP ${status} - ${error.response.data.detail || 'Server error'}`;
-      toast.error(errorMessage, { duration: 5000 });
+      // toast.error(errorMessage, { duration: 5000 });
     } else {
       // Other errors (e.g., request setup failed)
       toast.error(errorMessage, { duration: 5000 });
@@ -99,7 +99,7 @@ export const SignUpAPI = async (username, email, password) => {
       // Use the status code or the error message from the server response
       const status = error.response.status;
       errorMessage = `Request failed: HTTP ${status} - ${error.response.data.detail || 'Server error'}`;
-      toast.error(errorMessage, { duration: 5000 });
+      // toast.error(errorMessage, { duration: 5000 });
     } else {
       // Other errors (e.g., request setup failed)
       toast.error(errorMessage, { duration: 5000 });
