@@ -2,6 +2,16 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 
+
+
+// Helper function to set cookie
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;secure;samesite=lax`;
+}
+
+
 const useweblogintokenAPI = `${import.meta.env.VITE_BaseURL1}use-web-login-token/`;
 function Autologin() {
     const navigate = useNavigate();
