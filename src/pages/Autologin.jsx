@@ -36,7 +36,12 @@ function Autologin() {
                 }
 
                 // STEP 2 — Save new access token
-                localStorage.setItem("token", data.access);
+                // localStorage.setItem("access_token", data.access);
+
+                // Set cookies instead of localStorage
+                setCookie("access_token", data.access, 1);  // 1 day
+                setCookie("refresh_token", data.refresh, 7);  // 7 days
+
 
                 // STEP 3 — Redirect to Dashboard
                 navigate("/dashboard");
