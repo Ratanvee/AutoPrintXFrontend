@@ -476,6 +476,187 @@ export default function PrintOrderForm() {
   };
 
   // iOS-Compatible Upload Function with Fetch API
+
+  // const handleFinalSubmit = async ({ paymentMethod, transactionId, cashPayerName }) => {
+  //   setLoading(true);
+  //   const loadingToast = toast.loading('Submitting your order...');
+  //   const generatedOrderId = generateOrderId();
+  //   setOrderId(generatedOrderId);
+
+  //   try {
+  //     // ✅ Validation checks
+  //     if (uploadedFiles.length === 0) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('Please upload at least one file');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     if (uploadedFiles.length > 5) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('You can only upload up to 5 files at once');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     // ✅ Check total file size (iOS limitation - 50MB)
+  //     const totalSize = uploadedFiles.reduce((acc, file) => acc + file.size, 0);
+  //     const maxSize = 50 * 1024 * 1024; // 50MB
+
+  //     if (totalSize > maxSize) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('⚠️ Total file size exceeds 50MB. Please upload smaller files.');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     if (paymentMethod === 'upi' && !transactionId) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('Transaction ID is required for UPI payments');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     if (paymentMethod === 'cash' && !cashPayerName) {
+  //       toast.dismiss(loadingToast);
+  //       toast.error('Please enter your name for cash payment');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     const formData = new FormData();
+
+  //     // ✅ Build page counts object
+  //     const pageCounts = {};
+  //     let totalPages = 0;
+
+  //     console.log('📄 Building page counts from uploadedFiles:', uploadedFiles);
+
+  //     // Add ALL files with page count tracking
+  //     uploadedFiles.forEach((file, index) => {
+  //       // Ensure we're appending the actual File object
+  //       if (file.file instanceof File || file.file instanceof Blob) {
+  //         formData.append('FileUpload', file.file, file.name);
+  //       } else {
+  //         console.error(`Invalid file at index ${index}:`, file);
+  //       }
+
+  //       // Track page count for this file
+  //       const pageCount = file.pages || 0;
+  //       pageCounts[file.name] = pageCount;
+  //       totalPages += pageCount;
+
+  //       console.log(`📄 File ${index + 1}: ${file.name} - ${pageCount} pages`);
+
+  //       // Show individual file upload progress
+  //       toast.loading(`Uploading ${file.name}...`, {
+  //         id: `file-${index}`,
+  //         duration: Infinity
+  //       });
+  //     });
+
+  //     // ✅ Log the page counts object before sending
+  //     console.log('📦 Page counts object:', pageCounts);
+  //     console.log('📦 Total pages:', totalPages);
+  //     console.log('📦 Page counts JSON:', JSON.stringify(pageCounts));
+
+  //     // ✅ Add page counts as JSON string
+  //     formData.append('FilePagesCount', JSON.stringify(pageCounts));
+
+  //     // Add form data
+  //     formData.append('PaperSize', printOptions.paperSize);
+  //     formData.append('PaperType', printOptions.paperType);
+  //     formData.append('PrintColor', printOptions.printColor);
+  //     formData.append('PrintSide', printOptions.printSides);
+  //     formData.append('Binding', printOptions.binding);
+  //     formData.append('NumberOfCopies', printOptions.copies);
+  //     formData.append('PaymentAmount', amount);
+  //     formData.append('NoOfPages', totalPages);
+  //     formData.append('PaymentStatus', transactionId ? 1 : 0);
+  //     formData.append('Transaction_id', transactionId || "");
+  //     formData.append('CustomerName', cashPayerName || "");
+  //     formData.append('OrderId', generatedOrderId);
+  //     formData.append('PaymentMethod', paymentMethod);
+
+  //     // 🔍 DEBUG: Log all FormData entries
+  //     console.log('📦 FormData contents:');
+  //     for (let pair of formData.entries()) {
+  //       if (pair[0] !== 'FileUpload') {
+  //         console.log(`   ${pair[0]}: ${pair[1]}`);
+  //       } else {
+  //         console.log(`   ${pair[0]}: [File object]`);
+  //       }
+  //     }
+
+  //     // ✅ Use Fetch API instead of Axios for better iOS compatibility
+  //     const apiUrl = import.meta.env.VITE_BaseURL1 || '';
+  //     const response = await fetch(`${apiUrl}upload/${uniqueUrl}/`, {
+  //       method: 'POST',
+  //       body: formData,
+  //       credentials: 'include',
+  //       // ⚠️ Don't set Content-Type header - browser will set it with proper boundary
+  //     });
+
+  //     // Check if response is OK
+  //     if (!response.ok) {
+  //       const errorText = await response.text();
+  //       throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+  //     }
+
+  //     const data = await response.json();
+
+  //     // Dismiss all loading toasts
+  //     toast.dismiss(loadingToast);
+  //     uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
+
+  //     if (data && !data.error) {
+  //       const fileCount = data.files_uploaded || uploadedFiles.length;
+  //       console.log('✅ Upload successful:', data);
+
+  //       toast.success(
+  //         `Order submitted successfully!\nOrder ID: ${generatedOrderId}\nFiles: ${fileCount} (${totalPages} pages total)`,
+  //         {
+  //           duration: 6000,
+  //           position: 'top-center',
+  //           style: {
+  //             background: '#10b981',
+  //             color: '#fff',
+  //             fontWeight: 'bold',
+  //           },
+  //         }
+  //       );
+  //       nextStep();
+  //     } else {
+  //       throw new Error(data?.error || 'Failed to submit order');
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ Order submission failed:", error);
+  //     toast.dismiss(loadingToast);
+  //     uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
+
+  //     // ✅ Better error messages for iOS issues
+  //     let errorMessage = 'Failed to submit order. Please try again.';
+
+  //     if (error.message.includes('Failed to fetch') || error.message.includes('Network request failed')) {
+  //       errorMessage = '🔌 Connection error. Please check your internet connection and try again.';
+  //     } else if (error.message.includes('timeout')) {
+  //       errorMessage = '⏱️ Upload timeout. Your files may be too large. Try reducing file sizes.';
+  //     } else if (error.message.includes('413')) {
+  //       errorMessage = '📦 Files too large. Please reduce file size or upload fewer files.';
+  //     } else {
+  //       errorMessage = error.message || errorMessage;
+  //     }
+
+  //     toast.error(errorMessage, {
+  //       duration: 6000,
+  //       position: 'top-center',
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const handleFinalSubmit = async ({ paymentMethod, transactionId, cashPayerName }) => {
     setLoading(true);
     const loadingToast = toast.loading('Submitting your order...');
@@ -483,7 +664,7 @@ export default function PrintOrderForm() {
     setOrderId(generatedOrderId);
 
     try {
-      // ✅ Validation checks
+      // Validation checks
       if (uploadedFiles.length === 0) {
         toast.dismiss(loadingToast);
         toast.error('Please upload at least one file');
@@ -498,13 +679,11 @@ export default function PrintOrderForm() {
         return;
       }
 
-      // ✅ Check total file size (iOS limitation - 50MB)
+      // ✅ Check total file size for iOS
       const totalSize = uploadedFiles.reduce((acc, file) => acc + file.size, 0);
-      const maxSize = 50 * 1024 * 1024; // 50MB
-
-      if (totalSize > maxSize) {
+      if (totalSize > 50 * 1024 * 1024) {
         toast.dismiss(loadingToast);
-        toast.error('⚠️ Total file size exceeds 50MB. Please upload smaller files.');
+        toast.error('Total file size exceeds 50MB limit');
         setLoading(false);
         return;
       }
@@ -525,44 +704,28 @@ export default function PrintOrderForm() {
 
       const formData = new FormData();
 
-      // ✅ Build page counts object
+      // Build page counts
       const pageCounts = {};
       let totalPages = 0;
 
-      console.log('📄 Building page counts from uploadedFiles:', uploadedFiles);
-
-      // Add ALL files with page count tracking
       uploadedFiles.forEach((file, index) => {
-        // Ensure we're appending the actual File object
+        // ✅ Ensure proper file object for iOS
         if (file.file instanceof File || file.file instanceof Blob) {
           formData.append('FileUpload', file.file, file.name);
-        } else {
-          console.error(`Invalid file at index ${index}:`, file);
         }
 
-        // Track page count for this file
         const pageCount = file.pages || 0;
         pageCounts[file.name] = pageCount;
         totalPages += pageCount;
 
-        console.log(`📄 File ${index + 1}: ${file.name} - ${pageCount} pages`);
-
-        // Show individual file upload progress
         toast.loading(`Uploading ${file.name}...`, {
           id: `file-${index}`,
           duration: Infinity
         });
       });
 
-      // ✅ Log the page counts object before sending
-      console.log('📦 Page counts object:', pageCounts);
-      console.log('📦 Total pages:', totalPages);
-      console.log('📦 Page counts JSON:', JSON.stringify(pageCounts));
-
-      // ✅ Add page counts as JSON string
-      formData.append('FilePagesCount', JSON.stringify(pageCounts));
-
       // Add form data
+      formData.append('FilePagesCount', JSON.stringify(pageCounts));
       formData.append('PaperSize', printOptions.paperSize);
       formData.append('PaperType', printOptions.paperType);
       formData.append('PrintColor', printOptions.printColor);
@@ -577,43 +740,62 @@ export default function PrintOrderForm() {
       formData.append('OrderId', generatedOrderId);
       formData.append('PaymentMethod', paymentMethod);
 
-      // 🔍 DEBUG: Log all FormData entries
-      console.log('📦 FormData contents:');
-      for (let pair of formData.entries()) {
-        if (pair[0] !== 'FileUpload') {
-          console.log(`   ${pair[0]}: ${pair[1]}`);
-        } else {
-          console.log(`   ${pair[0]}: [File object]`);
-        }
+      // ✅ Get API URL from environment
+      const apiUrl = import.meta.env.VITE_BaseURL1;
+
+      // ✅ Check if API URL is HTTPS (required for iOS in production)
+      if (apiUrl && !apiUrl.startsWith('https://') && !apiUrl.includes('localhost')) {
+        console.error('⚠️ API URL must be HTTPS for iOS:', apiUrl);
+        toast.dismiss(loadingToast);
+        toast.error('Server configuration error. Please contact support.');
+        setLoading(false);
+        return;
       }
 
-      // ✅ Use Fetch API instead of Axios for better iOS compatibility
-      const apiUrl = import.meta.env.VITE_BaseURL1 || '';
+      console.log('📤 Uploading to:', `${apiUrl}upload/${uniqueUrl}/`);
+
+      // ✅ Use fetch with proper iOS configuration
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 min timeout
+
       const response = await fetch(`${apiUrl}upload/${uniqueUrl}/`, {
         method: 'POST',
         body: formData,
-        credentials: 'include',
-        // ⚠️ Don't set Content-Type header - browser will set it with proper boundary
+        // ✅ CRITICAL: Remove credentials for cross-origin on iOS
+        // credentials: 'include',  // Comment this out if having issues
+        mode: 'cors',
+        signal: controller.signal,
+        // ✅ Don't set Content-Type - let browser set it with boundary
       });
 
-      // Check if response is OK
+      clearTimeout(timeoutId);
+
+      // Dismiss loading toasts
+      toast.dismiss(loadingToast);
+      uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
+
+      // ✅ Check response
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        let errorMessage = `Server error: ${response.status}`;
+
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch (e) {
+          // Response is not JSON
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
 
-      // Dismiss all loading toasts
-      toast.dismiss(loadingToast);
-      uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
-
-      if (data && !data.error) {
-        const fileCount = data.files_uploaded || uploadedFiles.length;
+      if (data && data.success) {
         console.log('✅ Upload successful:', data);
-
         toast.success(
-          `Order submitted successfully!\nOrder ID: ${generatedOrderId}\nFiles: ${fileCount} (${totalPages} pages total)`,
+          `Order submitted successfully!\nOrder ID: ${generatedOrderId}`,
           {
             duration: 6000,
             position: 'top-center',
@@ -626,28 +808,32 @@ export default function PrintOrderForm() {
         );
         nextStep();
       } else {
-        throw new Error(data?.error || 'Failed to submit order');
+        throw new Error(data?.error || data?.message || 'Failed to submit order');
       }
+
     } catch (error) {
       console.error("❌ Order submission failed:", error);
       toast.dismiss(loadingToast);
       uploadedFiles.forEach((_, index) => toast.dismiss(`file-${index}`));
 
-      // ✅ Better error messages for iOS issues
-      let errorMessage = 'Failed to submit order. Please try again.';
+      // ✅ Better error messages for iOS
+      let errorMessage = 'Failed to submit order';
 
-      if (error.message.includes('Failed to fetch') || error.message.includes('Network request failed')) {
-        errorMessage = '🔌 Connection error. Please check your internet connection and try again.';
-      } else if (error.message.includes('timeout')) {
-        errorMessage = '⏱️ Upload timeout. Your files may be too large. Try reducing file sizes.';
-      } else if (error.message.includes('413')) {
-        errorMessage = '📦 Files too large. Please reduce file size or upload fewer files.';
+      if (error.name === 'AbortError') {
+        errorMessage = '⏱️ Upload timeout. Please try with smaller files or check your connection.';
+      } else if (error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {
+        // ✅ This is the iOS "Load failed" error
+        errorMessage = '🔌 Connection failed. Please check:\n• Your internet connection\n• The server is accessible\n• Try again in a moment';
+      } else if (error.message.includes('NetworkError')) {
+        errorMessage = '🌐 Network error. Please check your internet connection.';
+      } else if (error.message.includes('CORS')) {
+        errorMessage = '⚠️ Server configuration error. Please contact support.';
       } else {
         errorMessage = error.message || errorMessage;
       }
 
       toast.error(errorMessage, {
-        duration: 6000,
+        duration: 8000,
         position: 'top-center',
       });
     } finally {
