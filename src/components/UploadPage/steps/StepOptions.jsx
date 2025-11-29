@@ -187,7 +187,7 @@
 
 
 import React, { useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function StepOptions({
@@ -313,7 +313,7 @@ export default function StepOptions({
                         <div className="summary-items">
                             {uploadedFiles.map((file) => (
                                 <div key={file.id} className="summary-item">
-                                    <span>{file.name} ({file.pages} pages)</span>
+                                    <span>{file.name} <br /> ({file.pages} pages)</span>
                                     <span>₹{printOptions.printColor === "bw" ? "5" : "10"}/page</span>
                                 </div>
                             ))}
@@ -365,7 +365,8 @@ export default function StepOptions({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <ArrowLeft size={16} /> Previous
+                        {/* <ArrowLeft size={16} />  */}
+                        <ChevronLeft/>
                     </motion.button>
                     <motion.button
                         className="btn-primary"

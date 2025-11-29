@@ -820,14 +820,14 @@ export default function PrintOrderForm() {
       let errorMessage = 'Failed to submit order';
 
       if (error.name === 'AbortError') {
-        errorMessage = '⏱️ Upload timeout. Please try with smaller files or check your connection.';
+        errorMessage = 'Upload timeout. Please try with smaller files or check your connection.';
       } else if (error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {
         // ✅ This is the iOS "Load failed" error
-        errorMessage = '🔌 Connection failed. Please check:\n• Your internet connection\n• The server is accessible\n• Try again in a moment';
+        errorMessage = 'Connection failed. Please check:\n• Your internet connection\n• The server is accessible\n• Try again in a moment';
       } else if (error.message.includes('NetworkError')) {
-        errorMessage = '🌐 Network error. Please check your internet connection.';
+        errorMessage = 'Network error. Please check your internet connection.';
       } else if (error.message.includes('CORS')) {
-        errorMessage = '⚠️ Server configuration error. Please contact support.';
+        errorMessage = 'Server configuration error. Please contact support.';
       } else {
         errorMessage = error.message || errorMessage;
       }
@@ -961,7 +961,7 @@ export default function PrintOrderForm() {
           </motion.div>
 
           {/* Progress Steps */}
-          <motion.div
+          {/* <motion.div
             className="payment-steps"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -980,7 +980,7 @@ export default function PrintOrderForm() {
                 )}
               </React.Fragment>
             ))}
-          </motion.div>
+          </motion.div> */}
 
           {/* Step Content */}
           {currentStep === 1 && (
@@ -1035,7 +1035,7 @@ export default function PrintOrderForm() {
           <div className="footer-about">
             <h2>AutoPrintX</h2>
             <p>Your trusted partner for all printing needs.</p>
-            <p>Contact us: support@autoprintx.com</p>
+            <p>Contact us: autoprintx@gmail.com</p>
           </div>
 
           <div className="footer-developer">

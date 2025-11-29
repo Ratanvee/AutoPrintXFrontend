@@ -157,7 +157,7 @@
 
 /* Step Content */
 .payment-step-content {
-  padding: 20px 0;
+  padding: 0px 0;
 }
 
 .payment-step-content h2 {
@@ -276,6 +276,148 @@
 .file-item .remove-file:hover {
   background-color: rgba(220, 53, 69, 0.1);
 }
+
+/* Mobile-specific compact design */
+.upload-area.mobile-upload {
+  cursor: default;
+  padding: 0px 0px;
+}
+
+.upload-area.mobile-upload svg {
+  margin-bottom: 12px;
+}
+
+.upload-area.mobile-upload h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.upload-area.mobile-upload .btn-primary {
+  padding: 12px 30px;
+  font-size: 15px;
+}
+
+.upload-area.mobile-upload .upload-info {
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 15px;
+}
+
+.warning-box {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .payment-step-content h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .upload-container {
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+
+  .upload-area {
+    padding: 25px 15px;
+  }
+
+  .upload-area svg {
+    margin-bottom: 12px;
+  }
+
+  .upload-area h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .upload-area p {
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  .upload-area .btn-primary {
+    width: 100%;
+    max-width: 220px;
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+
+  .upload-area .upload-info {
+    font-size: 11px;
+    margin-top: 15px;
+    line-height: 1.6;
+  }
+
+  .uploaded-files h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .file-list {
+    gap: 10px;
+  }
+
+  .file-item {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .file-item .file-icon {
+    flex-shrink: 0;
+  }
+
+  .file-item .file-name {
+    font-size: 14px;
+    word-break: break-word;
+    line-height: 1.3;
+  }
+
+  .file-item .file-size {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .file-item .remove-file {
+    padding: 6px;
+  }
+
+  .step-buttons .btn-secondary {
+    max-width: 31px;
+    padding: 0px;
+    /* align-content: center; */
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+  }
+
+  .step-buttons .btn-primary,
+  .step-buttons .btn-secondary {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    gap: 10px;
+  }
+
+  .warning-box {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+
+}
+
+
+
 
 /* Step 2: Choose Printing Options */
 .options-container {
@@ -659,14 +801,14 @@
   display: flex;
   justify-content: space-between;
   margin-top: 30px;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   gap: 15px;
 }
 
 .step-buttons .btn-primary,
 .step-buttons .btn-secondary {
   flex: 1;
-  min-width: 180px;
+  /* min-width: 180px; */
   padding: 12px 20px;
   font-size: 16px;
 }
@@ -679,9 +821,10 @@
 
 
 /*  Footer Styles  developer style */
-.footer-upload{
+.footer-upload {
   padding: 1rem 4rem;
 }
+
 .footer-about-developer {
   display: flex;
   /* flex-direction: column; */
@@ -691,11 +834,11 @@
   padding: 20px 0;
 }
 
-.footer-bottom-upload{
+.footer-bottom-upload {
   margin-top: 0rem;
 }
 
-.footer-upload p{
+.footer-upload p {
   padding-bottom: 0rem;
 }
 
@@ -705,10 +848,11 @@
     padding: 30px;
   }
 
-  .footer-about-developer{
+  .footer-about-developer {
     flex-direction: column;
     gap: 30px;
   }
+
   .payment-header h1 {
     font-size: 28px;
   }
@@ -740,7 +884,8 @@
   }
 
   .options-container {
-    grid-template-columns: 1fr; /* Stack options form and summary */
+    grid-template-columns: 1fr;
+    /* Stack options form and summary */
     gap: 30px;
   }
 
@@ -809,13 +954,17 @@
   }
 
   .step-buttons {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 10px;
   }
 
   .step-buttons .btn-primary,
   .step-buttons .btn-secondary {
     width: 100%;
+  }
+
+  .step-buttons .btn-secondary {
+    padding: 0px;
   }
 }
 

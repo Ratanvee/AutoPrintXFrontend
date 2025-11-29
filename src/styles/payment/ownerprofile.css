@@ -147,8 +147,8 @@
 
 .owner-card-toggle-button {
     position: absolute;
-    right: 20px;
-    top: 30%;
+    right: 3px;
+    top: 40px;
     transform: translateY(-50%);
     width: 36px;
     height: 36px;

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CreditCard, ArrowLeft, ArrowRight, IndianRupee } from "lucide-react";
+import { CreditCard, ArrowLeft, ArrowRight, IndianRupee, ChevronLeft } from "lucide-react";
 import { CreateOrdersRazorpay } from '../../../api/endpoints';
 import LoadingButton from "../../SingInUP/components/LoadingButton";
 
@@ -148,7 +148,7 @@ export default function StepPayment({
                             </div>
                             {transactionId && (
                                 <p className="mt-4 text-green-600">
-                                    ✅ Payment Successful! Transaction ID: <b>{transactionId}</b>
+                                    Payment Successful! Transaction ID: <b>{transactionId}</b>
                                 </p>
                             )}
                         </motion.div>
@@ -174,7 +174,7 @@ export default function StepPayment({
                             </div>
                             {cashPayerName && (
                                 <p className="mt-4 text-green-600">
-                                    ✅ You can give money to Owner : <b>{cashPayerName}</b>
+                                    You can give money to Owner : <b>{cashPayerName}</b>
                                 </p>
                             )}
                         </motion.div>
@@ -267,7 +267,8 @@ export default function StepPayment({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <ArrowLeft size={16} /> Previous
+                    {/* <ArrowLeft size={16} />  */}
+                    <ChevronLeft /> 
                 </motion.button>
                 {/* <motion.button
                     className="btn-primary"
