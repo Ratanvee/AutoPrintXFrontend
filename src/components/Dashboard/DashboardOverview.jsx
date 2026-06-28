@@ -139,7 +139,7 @@ const DashboardOverview = ({ recentActivities = [], showNotifications, setShowNo
         <a href={dashboardStats.unique_url ? `/upload/${dashboardStats.unique_url}` : '#'}>
           /upload/{dashboardStats.unique_url || 'Loading...'}
         </a>
-        <div className="time-range-selector">
+        {/* <div className="time-range-selector">
           {["24h", "7d", "30d", "90d"].map((range) => (
             <button
               key={range}
@@ -149,7 +149,7 @@ const DashboardOverview = ({ recentActivities = [], showNotifications, setShowNo
               {range}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Stats Cards */}
@@ -206,9 +206,9 @@ const DashboardOverview = ({ recentActivities = [], showNotifications, setShowNo
                 <option value="overall">Overall</option>
               </select>
 
-              <button className="btn-icon"><Eye size={16} /></button>
+              {/* <button className="btn-icon"><Eye size={16} /></button>
               <button className="btn-icon"><Download size={16} /></button>
-              <button className="btn-icon"><MoreHorizontal size={16} /></button>
+              <button className="btn-icon"><MoreHorizontal size={16} /></button> */}
             </div>
           </div>
 

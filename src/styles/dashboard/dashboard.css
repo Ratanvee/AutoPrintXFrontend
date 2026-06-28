@@ -538,7 +538,7 @@
 .dashboard-overview {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 10px;
 }
 
 .dashboard-header-section {
@@ -668,7 +668,7 @@
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 25px;
+  gap: 20px;
 }
 
 .chart-section,
@@ -683,7 +683,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .section-header h3 {
@@ -784,7 +784,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
-  margin-bottom: 30px;
+  /* margin-bottom: 10px; */
 }
 
 /* Smooth transitions for data updates */
@@ -817,7 +817,7 @@
 /* Prevent content jump during updates */
 .activity-list,
 .chart-section>div {
-  min-height: 60px;
+  min-height: 40px;
 }
 
 /* Skeleton for header */
@@ -1121,7 +1121,7 @@ input:checked+.slider:before {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 20px;
 }
@@ -1159,7 +1159,7 @@ input:checked+.slider:before {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -1230,7 +1230,7 @@ input:checked+.slider:before {
 /* Orders Management Table */
 .orders-table-container {
   background-color: #ffffff;
-  padding: 25px;
+  padding: 15px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }

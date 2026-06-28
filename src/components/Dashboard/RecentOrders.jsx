@@ -426,10 +426,8 @@ const RecentOrders = ({ selectedPrinter }) => {
     >
       <div className="section-header flex justify-between items-center">
         <div>
-          <h3>Recent Orders</h3>
+          <h3>Recent Orders({filteredOrders.length})</h3>
         </div>
-
-        <p>{filteredOrders.length} orders found</p>
 
         <div className="flex items-center gap-2">
           <label className="switch">

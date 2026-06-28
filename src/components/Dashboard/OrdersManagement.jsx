@@ -179,14 +179,14 @@ const OrdersManagement = () => {
           <h1>Orders Management</h1>
           <p>Manage and track all your customer print orders</p>
         </div>
-        <div className="header-actions">
+        {/* <div className="header-actions">
           <motion.button className="btn-secondary" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Download size={16} /> Export
           </motion.button>
           <motion.button className="btn-primary" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Plus size={16} /> New Order
           </motion.button>
-        </div>
+        </div> */}
       </div>
 
       {/* 🔍 Filters */}
