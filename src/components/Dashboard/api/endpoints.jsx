@@ -86,7 +86,7 @@ const handleError = (error, options = {}) => {
 
   // Network error (server offline)
   if (axios.isAxiosError(error) && !error.response) {
-    errorMessage = "🔴 Connection Failed: Server is offline or unreachable.";
+    errorMessage = "Connection Failed: Server is offline or unreachable.";
     if (!silent) {
       toast.error(errorMessage, { ...toastOptions, duration: 10000 });
     }
@@ -412,7 +412,7 @@ export const DashboardSettings = async () => {
 
     // Network error (server offline)
     if (axios.isAxiosError(error) && !error.response) {
-      errorMessage = "🔴 Connection Failed: The server is offline or unreachable.";
+      errorMessage = "Connection Failed: The server is offline or unreachable.";
       toast.error(errorMessage, {
         duration: 10000,
         position: 'top-center'

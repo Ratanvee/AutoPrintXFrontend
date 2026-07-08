@@ -71,7 +71,7 @@
 }
 
 .sidebar-header {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   text-align: center;
   /* overflow: hidden; */
   display: flex;
@@ -99,7 +99,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   padding: 7px;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.05);
@@ -362,7 +362,7 @@
 /* Dashboard Content */
 .dashboard-content {
   flex-grow: 1;
-  padding: 30px;
+  padding: 10px 18px;
   overflow-y: auto;
 }
 

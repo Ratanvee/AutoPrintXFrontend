@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { SignUpAPI, sendOTPAPI, verifyOTPAPI } from '../../api/endpoints';
+import { SignUpAPI, sendOTPAPI, verifyOTPAPI, googleSignup } from '../../api/endpoints';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from "lucide-react";
 import OTPInput from "./components/OTPInput";
 import LoadingButton from "./components/LoadingButton";
 import { validatePassword, isValidEmail } from "./utils/authUtils";
 import { useNavigate } from "react-router-dom";
+
+import { GoogleLogin } from "@react-oauth/google";
+import GoogleLoginButton from "./components/GoogleLoginButton";
 
 function SignUpForm() {
   const [state, setState] = useState({
@@ -159,12 +162,13 @@ function SignUpForm() {
             <h1 className="snin-h1">Create Account</h1>
 
             <div className="social-container">
-              <a href="#" className="social snin-a">
+              {/* <a href="#" className="social snin-a">
                 <FontAwesomeIcon icon={faGoogle} />
               </a>
               <a href="#" className="social snin-a">
                 <FontAwesomeIcon icon={faFacebookF} />
-              </a>
+              </a> */}
+              <GoogleLoginButton mode="signup" />
             </div>
 
             <span className="snin-span">or use your email for registration</span>
@@ -371,6 +375,32 @@ function SignUpForm() {
           </>
         )}
       </form>
+
+      <GoogleLogin
+        onSuccess={async (credentialResponse) => {
+
+          const res = await googleSignup(
+            credentialResponse.credential
+          );
+
+          if (res.success) {
+
+            // navigate("/dashboard");
+            toast.success("Welcome " + res.username);
+
+            return;
+          }
+
+          alert(res.message);
+
+        }}
+
+        onError={() => {
+
+          alert("Signup Failed");
+
+        }}
+      />
     </div>
   );
 }

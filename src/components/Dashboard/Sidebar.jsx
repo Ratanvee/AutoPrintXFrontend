@@ -12,9 +12,9 @@ const Sidebar = ({ collapsed, activeSection, setActiveSection, dashboardData }) 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: BarChart3, path: "/dashboard" },
     { id: "orders", label: "Orders", icon: ShoppingCart, path: "/dashboard/orders" },
-    { id: "customers", label: "Customers", icon: Users, path: "/dashboard/customers" },
+    // { id: "customers", label: "Customers", icon: Users, path: "/dashboard/customers" },
     { id: "products", label: "Products", icon: Package, path: "/dashboard/products" },
-    { id: "reports", label: "Reports", icon: FileText, path: "/dashboard/reports" },
+    // { id: "reports", label: "Reports", icon: FileText, path: "/dashboard/reports" },
     { id: "settings", label: "Settings", icon: Settings, path: "/dashboard/settings" },
   ]
 

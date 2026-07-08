@@ -16,6 +16,9 @@ const sendOTPURL = `${API_URL}send-otp/`;
 const verifyOTPURL = `${API_URL}verify-otp/`;
 const resetPasswordURL = `${API_URL}reset-password/`;
 const RatingURL = `${API_URL}cutomer-rating`
+const GOOGLE_LOGIN = `${API_URL}google-login/`;
+const GOOGLE_SIGNUP = `${API_URL}google-signup/`;
+const LINK_GOOGLE = `${API_URL}link-google/`;
 
 axios.defaults.withCredentials = true;
 
@@ -64,6 +67,51 @@ export const login = async (username, password) => {
     return null; // or throw error;
   }
 };
+
+// Google Loing API 
+export const googleLogin = async (credential) => {
+  try {
+    const res = await axios.post(
+      GOOGLE_LOGIN,
+      {
+        credential,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    return res.data;
+
+  } catch (err) {
+
+    return err.response.data;
+
+  }
+};
+
+// Google Signup API
+export const googleSignup = async (credential) => {
+  try {
+    const res = await axios.post(
+      GOOGLE_SIGNUP,
+      {
+        credential,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    return res.data;
+
+  } catch (err) {
+
+    return err.response.data;
+
+  }
+};
+
 
 export const SignUpAPI = async (username, email, password) => {
   try {
@@ -184,89 +232,48 @@ export const UserToUploadDataAPI = async (uniqueUrl) => {
   try {
     const response = await axios.get(`${UPLOAD_URL}${uniqueUrl}/`, {
       withCredentials: true,
-      timeout: 60000, // 10 second timeout
+      timeout: 60000,
     });
 
-    // Check if response has an error field
     if (response.data && response.data.error) {
-      toast.error(` ${response.data.error}`, {
-        duration: 5000,
-        position: 'top-center',
-      });
+      toast.error(`${response.data.error}`, { duration: 5000, position: 'top-center' });
       return null;
     }
 
-    // Return owner_info if it exists
     if (response.data && response.data.owner_info) {
-      return response.data.owner_info;
+      return response.data; // ✅ return full response { owner_info, pricing, success, message }
     }
 
-    // If no owner_info, return null
     console.warn("No owner_info in response");
-    toast.warning(' Shop information incomplete', {
-      duration: 3000,
-    });
+    toast.warning('Shop information incomplete', { duration: 3000 });
     return null;
 
   } catch (error) {
     console.error("API Error:", error);
-
     let errorMessage = "An unknown error occurred. Try again later!";
-    let toastOptions = {
-      duration: 5000,
-      position: 'top-center',
-    };
+    let toastOptions = { duration: 5000, position: 'top-center' };
 
-    // Network error (server offline)
     if (axios.isAxiosError(error) && !error.response) {
-      if (error.code === 'ECONNABORTED') {
-        errorMessage = " Request timeout: The server took too long to respond";
-      } else {
-        errorMessage = " Connection Failed: The server is offline or unreachable. Please check your internet connection.";
-        toastOptions.duration = 2000;
-        toastOptions.style = {
-          background: '#ef4444',
-          color: '#fff',
-          fontWeight: 'bold',
-        };
-      }
+      errorMessage = error.code === 'ECONNABORTED'
+        ? "Request timeout: The server took too long to respond"
+        : "Connection Failed: The server is offline or unreachable.";
+      toastOptions = { ...toastOptions, duration: 2000, style: { background: '#ef4444', color: '#fff', fontWeight: 'bold' } };
       toast.error(errorMessage, toastOptions);
-    }
-    // HTTP error (4xx, 5xx)
-    else if (error.response) {
+    } else if (error.response) {
       const status = error.response.status;
-      const detail = error.response.data?.detail ||
-        error.response.data?.error ||
-        error.response.data?.message ||
-        'Server error';
-
+      const detail = error.response.data?.detail || error.response.data?.error || error.response.data?.message || 'Server error';
       switch (status) {
-        case 400:
-          errorMessage = ` Bad Request: ${detail}`;
-          break;
+        case 400: errorMessage = `Bad Request: ${detail}`; break;
         case 404:
-          errorMessage = `Not Found: ${detail}`;
-          toast.error(errorMessage, {
-            duration: 6000,
-            position: 'top-center',
-            icon: '🏪',
-          });
+          toast.error(`Not Found: ${detail}`, { duration: 6000, position: 'top-center', icon: '🏪' });
           return null;
-        case 500:
-          errorMessage = ` Server Error: ${detail}`;
-          toastOptions.duration = 7000;
-          break;
-        default:
-          errorMessage = ` Error ${status}: ${detail}`;
+        case 500: errorMessage = `Server Error: ${detail}`; toastOptions.duration = 7000; break;
+        default: errorMessage = `Error ${status}: ${detail}`;
       }
-
       toast.error(errorMessage, toastOptions);
-    }
-    // Other errors
-    else {
+    } else {
       toast.error(`❌ ${errorMessage}`, toastOptions);
     }
-
     return null;
   }
 };
@@ -431,7 +438,7 @@ export const sendOTPAPI = async (emailOrPhone, purpose) => {
 
     const data = await response.json();
     // console.log("Send OTP response:", data);
-    
+
 
     if (!response.ok) {
       // Return error data for handling in component
@@ -548,7 +555,7 @@ export const resetPasswordAPI = async (emailOrPhone, newPassword) => {
 };
 
 export const CustomerRatingAPI = async (ratevalue, comment) => {
-  try{
+  try {
     toast.success("Thanks for Rating 😊")
 
     const response = await fetch(CREATEORDERS_URL, {

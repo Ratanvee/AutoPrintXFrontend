@@ -1,6 +1,7 @@
     {
       "compilerOptions": {
         "baseUrl": "src", // Set the base URL to your 'src' folder
+        "ignoreDeprecations": "6.0",
         "paths": {
           "@api/*": ["api/*"], // Define aliases
         //   "@utils/*": ["utils/*"]

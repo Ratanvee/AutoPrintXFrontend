@@ -5,7 +5,7 @@ import {
     faGoogle
 } from "@fortawesome/free-brands-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { login, sendOTPAPI, verifyOTPAPI, resetPasswordAPI } from "../../api/endpoints";
+import { login, sendOTPAPI, verifyOTPAPI, resetPasswordAPI, googleLogin } from "../../api/endpoints";
 // import { AuthContext } from "../contexts/useAuth";
 import { useAuth } from "../../contexts/useAuth";
 import toast from 'react-hot-toast'; // <--- MUST BE HERE
@@ -14,6 +14,9 @@ import { useNavigate } from "react-router-dom";
 import { Loader } from 'rsuite';
 import CircularProgress from '@mui/material/CircularProgress';
 import LoadingButton from "./components/LoadingButton";
+import GoogleLoginButton from "./components/GoogleLoginButton";
+import { GoogleLogin } from "@react-oauth/google";
+// import { googleLogin } from "../../api/endpoints";
 
 function SignInForm() {
     const [username, setUsername] = useState("");
@@ -233,12 +236,13 @@ function SignInForm() {
                         <h1 className="snin-h1">Sign in</h1>
 
                         <div className="social-container">
-                            <a href="#" className="social snin-a">
+                            {/* <a href="#" className="social snin-a">
                                 <FontAwesomeIcon icon={faGoogle} />
-                            </a>
-                            <a href="#" className="social snin-a">
+                            </a> */}
+                            <GoogleLoginButton mode="login" />
+                            {/* <a href="#" className="social snin-a">
                                 <FontAwesomeIcon icon={faFacebookF} />
-                            </a>
+                            </a> */}
                         </div>
 
                         <span className="snin-span">or use your account</span>
@@ -467,6 +471,48 @@ function SignInForm() {
                     </>
                 )}
             </div>
+            <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+
+                    const res = await googleLogin(
+                        credentialResponse.credential
+                    );
+
+                    if (res.success) {
+
+                        navigate("/dashboard");
+
+                        return;
+                    }
+
+                    alert(res.message);
+
+                }}
+
+                onError={() => {
+
+                    alert("Google Login Failed");
+
+                }}
+            />
+            <GoogleLogin
+                text="continue_with"
+                onSuccess={async (response) => {
+
+                    await axios.post(
+                        "/api/link-google/",
+                        {
+                            credential: response.credential
+                        },
+                        {
+                            withCredentials: true
+                        }
+                    );
+
+                    toast.success("Google account linked.");
+
+                }}
+            />
         </div>
     );
 }

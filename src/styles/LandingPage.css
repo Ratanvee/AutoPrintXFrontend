@@ -135,7 +135,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 0.5rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -192,7 +192,7 @@ header {
     padding: 4rem 2rem;
     background-color: var(--light-color);
     max-width: 1400px;
-    margin: 0 auto;
+    margin: 25px auto;
 }
 
 .hero-content {
@@ -541,13 +541,17 @@ header {
     width: 30px;
 }
 
+.contact-item p {
+    margin: 5px 10px;
+}
+
 .contact-form {
     flex: 2;
     min-width: 300px;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .form-group label {

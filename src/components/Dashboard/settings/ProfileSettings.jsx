@@ -1,7 +1,6 @@
 import { motion } from "framer-motion"
 import { Save, Camera } from "lucide-react"
 import AutoPrintXPoster from '../QRCodeGenerator'
-import { getQRData } from "../../../global"
 import { useEffect } from "react"
 
 const ProfileSettings = ({
@@ -31,24 +30,6 @@ const ProfileSettings = ({
         || avatar
         || `https://placehold.co/120x120/4f46e5/ffffff?text=${getInitial()}`
 
-    // ✅ Get QR data safely
-    const getQRDataSafely = () => {
-        try {
-            const qrData = getQRData()
-            return {
-                unique_url: qrData?.unique_url || "",
-                username: qrData?.owner_name.slice(0,18) || firstName
-            }
-        } catch (error) {
-            console.error("Error getting QR data:", error)
-            return {
-                unique_url: "",
-                username: firstName
-            }
-        }
-    }
-
-    const qrData = getQRDataSafely()
 
     return (
         <motion.div
@@ -136,12 +117,6 @@ const ProfileSettings = ({
                 </motion.button>
             </form>
 
-            {qrData.unique_url && (
-                <AutoPrintXPoster
-                    value={`${import.meta.env.VITE_QRCodeURL}upload/${qrData.unique_url}`}
-                    ownerName={qrData.username}
-                />
-            )}
         </motion.div>
     )
 }

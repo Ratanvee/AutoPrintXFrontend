@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { User, Building, Shield, Bell, CreditCard } from "lucide-react"
+import { User, Building, Shield, Bell, CreditCard, Printer, QrCode } from "lucide-react"
 
 // Import individual setting components
 import GeneralSettings from "./settings/GeneralSettings"
@@ -11,6 +11,11 @@ import ProfileSettings from "./settings/ProfileSettings"
 import SecuritySettings from "./settings/SecuritySettings"
 import NotificationsSettings from "./settings/NotificationsSettings"
 import BillingSettings from "./settings/BillingSettings"
+import PrinterSettings from "./settings/PrinterSettings"
+import AutoPrintXPoster from "./settings/QRCodeGenerator"
+import { getQRData } from "../../global"
+
+
 import toast from "react-hot-toast"
 import { get_dashboard, DashboardSettings, UpdateDashboardSettings, ChangePasswordAPI } from "./api/endpoints"
 
@@ -20,7 +25,7 @@ const SettingsSection = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [QRData, setQRData] = useState(null)
   const [SomeChange, setSomeChange] = useState(false)
-  
+
 
   const [settings, setSettings] = useState({
     general: {
@@ -65,6 +70,8 @@ const SettingsSection = () => {
     { id: "security", label: "Security", icon: Shield, path: "/dashboard/settings/security" },
     { id: "notifications", label: "Notifications", icon: Bell, path: "/dashboard/settings/notifications" },
     { id: "billing", label: "Billing", icon: CreditCard, path: "/dashboard/settings/billing" },
+    { id: "printer", label: "Printer", icon: Printer, path: "/dashboard/settings/printer" },
+    { id: "qrcode", label: "QR Code", icon: QrCode, path: "/dashboard/settings/qrcode" },
   ]
 
   // Determine active tab based on current route
@@ -74,6 +81,7 @@ const SettingsSection = () => {
     if (path.includes('/security')) return 'security'
     if (path.includes('/notifications')) return 'notifications'
     if (path.includes('/billing')) return 'billing'
+    if (path.includes('/printer')) return 'printer'
     return 'general'
   }
 
@@ -119,7 +127,7 @@ const SettingsSection = () => {
   const handleSave = (section) => {
     // console.log(`Saving ${section} settings:`, settings[section])
     setSomeChange(false)
-    if (SomeChange){
+    if (SomeChange) {
       if (section === 'security') {
         // Add your security-specific validation here
         data = ChangePasswordAPI(settings[section])
@@ -128,12 +136,12 @@ const SettingsSection = () => {
         // Add your API call here
         UpdateDashboardSettings(section, settings[section])
       }
-    } else{
+    } else {
       toast.error("No Changes detected")
 
     }
 
-    
+
 
   }
 
@@ -192,6 +200,28 @@ const SettingsSection = () => {
   useEffect(() => {
     fetchSettings()
   }, [])
+
+
+  const firstName = settings?.profile?.firstName || settings?.profile?.fullName
+  // ✅ Get QR data safely
+  const getQRDataSafely = () => {
+    try {
+      const qrData = getQRData()
+      return {
+        unique_url: qrData?.unique_url || "",
+        username: qrData?.owner_name.slice(0, 18) || firstName
+      }
+    } catch (error) {
+      console.error("Error getting QR data:", error)
+      return {
+        unique_url: "",
+        username: firstName
+      }
+    }
+  }
+
+  const qrData = getQRDataSafely()
+
 
   return (
     <motion.div
@@ -298,6 +328,17 @@ const SettingsSection = () => {
                   />
                 }
               />
+              <Route path="/printer" element={
+                <PrinterSettings handleSave={handleSave} />
+              } />
+              <Route path="/qrcode" element={
+                <AutoPrintXPoster
+                  value={`${import.meta.env.VITE_QRCodeURL}upload/${qrData.unique_url}`}
+                  ownerName={qrData.username} />
+              } />
+
+
+
             </Routes>
           </AnimatePresence>
         </motion.div>

@@ -60,12 +60,16 @@
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 900px;
-  padding: 40px;
+  padding: 20px;
 }
 
 .payment-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 15px;
+}
+
+.payment-header p {
+  margin-bottom: 0px;
 }
 
 .payment-header h1 {
@@ -158,13 +162,19 @@
 /* Step Content */
 .payment-step-content {
   padding: 0px 0;
+  margin-top: 15px;
+  opacity: 1;
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .payment-step-content h2 {
   font-size: 28px;
   font-weight: 700;
   color: var(--primary-color);
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
@@ -173,7 +183,7 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 15px;
 }
 
 .upload-area {
@@ -288,17 +298,17 @@
 }
 
 .upload-area.mobile-upload h3 {
-  font-size: 18px;
+  font-size: 17px;
   margin-bottom: 15px;
 }
 
 .upload-area.mobile-upload .btn-primary {
-  padding: 12px 30px;
+  /* padding: 12px 30px; */
   font-size: 15px;
 }
 
 .upload-area.mobile-upload .upload-info {
-  font-size: 12px;
+  font-size: 10px;
   line-height: 1.5;
   margin-top: 15px;
 }
@@ -344,7 +354,7 @@
 
   .upload-area .btn-primary {
     width: 100%;
-    max-width: 220px;
+    max-width: 150px;
     padding: 12px 20px;
     font-size: 15px;
   }
@@ -424,13 +434,13 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .options-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 10px;
 }
 
 .options-summary {
@@ -452,7 +462,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .options-summary .summary-item {
@@ -464,11 +474,12 @@
 
 .options-summary .summary-item span:first-child {
   color: var(--light-text-color);
+  word-break: break-all;
 }
 
 .options-summary .summary-divider {
   border-top: 1px dashed #e0e0e0;
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 .options-summary .summary-item.total {
@@ -491,7 +502,7 @@
 .options-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .form-group label {
@@ -504,7 +515,7 @@
 
 .form-group select {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 10px;
   border-radius: 10px;
   border: 2px solid #e0e0e0;
   font-size: 14px;
@@ -530,10 +541,10 @@
 }
 
 .toggle-btn {
-  padding: 12px 15px;
+  padding: 12px 5px;
   border-radius: 50px;
   border: none;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -542,7 +553,7 @@
 
 .toggle-btn:not(.active) {
   background: #e8e8e8;
-  color: #9e9e9e;
+  color: #444444;
 }
 
 .toggle-btn.active {
@@ -558,7 +569,7 @@
 
 .copies-label {
   display: block;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #4a4a4a;
 
@@ -610,7 +621,7 @@
 .counter-value {
   flex: 1;
   text-align: center;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 600;
   color: #2c3e50;
   padding: 0 20px;
@@ -719,7 +730,7 @@
 /* Step 4: Confirmation */
 .confirmation-content {
   text-align: center;
-  padding: 40px;
+  /* padding: 40px; */
 }
 
 .confirmation-icon {
@@ -800,7 +811,7 @@
 .step-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  /* margin-top: 20px; */
   /* flex-wrap: wrap; */
   gap: 15px;
 }
@@ -870,10 +881,10 @@
     font-size: 13px;
   }
 
-  .payment-step-content h2 {
+  /* .payment-step-content h2 {
     font-size: 24px;
     margin-bottom: 25px;
-  }
+  } */
 
   .upload-area {
     padding: 30px;
@@ -890,7 +901,7 @@
   }
 
   .options-summary {
-    padding: 20px;
+    padding: 15px;
   }
 
   .options-summary h3 {
@@ -919,9 +930,9 @@
     padding: 20px;
   }
 
-  .confirmation-content {
+  /* .confirmation-content {
     padding: 30px;
-  }
+  } */
 
   .confirmation-content h2 {
     font-size: 28px;

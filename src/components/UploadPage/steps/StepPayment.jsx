@@ -170,13 +170,15 @@ export default function StepPayment({
                                     onChange={(e) => setCashPayerName(e.target.value)}
                                     placeholder="John Doe"
                                     required
+                                    // minlength="3"
+                                    maxlength="20"
                                 />
                             </div>
-                            {cashPayerName && (
+                            {/* {cashPayerName && (
                                 <p className="mt-4 text-green-600">
                                     You can give money to Owner : <b>{cashPayerName}</b>
                                 </p>
-                            )}
+                            )} */}
                         </motion.div>
                     )}
 

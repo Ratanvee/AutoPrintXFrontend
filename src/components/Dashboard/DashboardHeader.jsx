@@ -14,74 +14,30 @@ import { printDocument, getPrinters, checkPrinterAgentStatus } from "./api/print
 
 const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotifications, unreadCount, dashboardData }) => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [status, setStatus] = useState("Checking...");
-  const [color, setColor] = useState("gray");
-  const [printers, setPrinters] = useState([]);
-  const [selectedPrinter, setSelectedPrinter] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [agentActive, setAgentActive] = useState(false);
+  const [agentActive, setAgentActive] = useState(false)
+  const [agentChecking, setAgentChecking] = useState(true)
 
-  // Check printer agent status
-  const checkStatus = async () => {
+  // ── Check agent status ──
+  const checkAgent = async () => {
+    setAgentChecking(true)
     try {
-      const data = await checkPrinterAgentStatus();
-      if (data.status === "online") {
-        setStatus("🟢 Active");
-        setColor("green");
-        setAgentActive(true);
-      }
-      else {
-        setStatus("🔴 Offline");
-        setColor("red");
-        setAgentActive(false);
-      }
-    } catch (err) {
-      setStatus("🔴 Offline");
-      setColor("red");
-      setAgentActive(false);
-    }
-  };
-
-  // Fetch connected printers
-  const fetchPrinters = async () => {
-    setLoading(true);
-    try {
-      // const response = await fetch("http://localhost:5050/printers");
-      // const data = await response.json();
-      const data = await getPrinters();
-      if (data && Array.isArray(data)) {
-        setPrinters(data);
-      } else {
-        setPrinters([]);
-      }
-    } catch (error) {
-      console.error("Error fetching printers:", error);
-      setPrinters([]);
+      const data = await checkPrinterAgentStatus()
+      setAgentActive(data?.status === "online")
+    } catch {
+      setAgentActive(false)
     } finally {
-      setLoading(false);
+      setAgentChecking(false)
     }
-  };
+  }
 
-  // Auto-refresh agent + printers every 5s
+  const agentStatus = agentChecking ? "checking" : agentActive ? "online" : "offline"
+
+  // Poll agent every 5s
   useEffect(() => {
-    const checkAndFetch = async () => {
-      await checkStatus();
-      // if (agentActive) await fetchPrinters(); // fetch only if active
-    };
-
-    checkAndFetch();
-    const interval = setInterval(checkAndFetch, 5000);
-    return () => clearInterval(interval);
-  }, [agentActive]);
-
-  // Fetch printers immediately when agent becomes active
-  useEffect(() => {
-    if (agentActive) {
-      fetchPrinters();
-      // console.log("these are printers : ", printers )
-    }
-  }, [agentActive]);
-
+    checkAgent()
+    const interval = setInterval(checkAgent, 5000)
+    return () => clearInterval(interval)
+  }, []);
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [message, setMessage] = useState('');
@@ -104,6 +60,15 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   };
 
 
+
+  const statusConfig = {
+    online: { color: "#10b981", label: "Online", pulse: true },
+    // checking: { color: "#f59e0b", label: "Checking", pulse: false },
+    offline: { color: "#ef4444", label: "Offline", pulse: false },
+  }
+
+  // Usage: agentStatus = "online" | "checking" | "offline"
+  const { color, label, pulse } = statusConfig[agentStatus] ?? statusConfig.offline
 
 
   return (
@@ -141,44 +106,32 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
       </button>
 
       <div className="header-actions">
-        {/* Printer select box */}
-        <div className="form-group1">
-          {/* <label htmlFor="printerName">Printer name</label> */}
-          <select
-            id="printerName"
-            className="status-filter"
-            value={selectedPrinter}
-            onChange={(e) => { setSelectedPrinter(e.target.value), setSelectedPrinterr(e.target.value) }}
-            disabled={!agentActive} // disable select if agent offline
-            style={{
-              border: `2px solid ${agentActive ? "#ccc" : "red"}`,
-              color: agentActive ? "black" : "red",
-              backgroundColor: agentActive ? "white" : "#ffe6e6",
-            }}
-          >
-
-            {loading ? (
-              <option>Loading printers...</option>
-            ) : !agentActive ? (
-              <option>🔴 Offline</option>
-            ) : printers.length > 0 ? (
-              printers.map((printer, index) => (
-                <option key={1}>Select Printer Here</option>,
-                <option key={index+1} value={printer}>
-                  {printer}
-                </option>
-              ))
-            ) : (
-              <option>No printers found</option>
-            )}
-          </select>
-
-          {/* Pass selectedPrinter to RecentOrders
-          <RecentOrders selectedPrinter={selectedPrinter} /> */}
-        </div>
-        <div>
+        {/* <div>
           <strong>Printer Agent:</strong>{" "}
           {status === "loading" ? "Checking..." : status.toUpperCase()}
+          </div> */}
+        {/* Animated dot */}
+
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <strong style={{ fontSize: "13px", color: "#374151" }}>Agent:</strong>
+
+          {/* Dot */}
+          <div style={{ position: "relative", width: "10px", height: "10px", flexShrink: 0 }}>
+            <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: color }} />
+            {pulse && (
+              <motion.div
+                animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                style={{
+                  position: "absolute", inset: 0,
+                  borderRadius: "50%", background: color,
+                }}
+              />
+            )}
+          </div>
+
+          {/* Label */}
+          <span style={{ fontSize: "13px", fontWeight: 600, color }}>{label}</span>
         </div>
         {/* <div style={{ fontSize: "12px", color: "#555" }}>
           Last checked: {lastChecked || "--:--:--"}
@@ -198,11 +151,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
           <span className="badge">5</span>
         </motion.div>
 
-        <motion.div className="profile" whileHover={{ scale: 1.05 }}>
-          {/* <img src="https://placehold.co/100x100/0a2463/white?text=A" alt="Admin User" /> */}
-          <img src={dashboardData && dashboardData.user.shop_image ? dashboardData.user.shop_image : "https://placehold.co/100x100/0a2463/white?text=A"} alt="Admin User" />
-
-        </motion.div>
+        
       </div>
     </header>
   )

@@ -200,6 +200,7 @@ const RecentOrders = ({ selectedPrinter }) => {
     switch (status) {
       case "Complete": return "text-success"
       case "Processing": return "text-warning"
+      case "Downloading": return "text-primary"
       case "Pending": return "text-danger"
       case "Cancelled": return "text-light bg-dark"
       default: return "text-dark"
@@ -275,21 +276,179 @@ const RecentOrders = ({ selectedPrinter }) => {
     toast.success(`Downloaded ${files.length} file(s)!`, { duration: 3000 })
   }, [])
 
+  // const handlePrintFile = useCallback(async (file, order) => {
+  //   const printerName = getSelectedPrinter()
+  //   if (!printerName) {
+  //     toast.error("⚠️ Please select a printer first.")
+  //     return
+  //   }
+
+  //   const printingToast = toast.loading(`Printing ${file.name}...`)
+  //   // Update order status to Complete after successful print
+  //   queryClient.setQueryData(['recentOrders'], (oldData) => {
+  //     if (!oldData) return oldData
+  //     return oldData.map(o =>
+  //       o.id === order.id ? { ...o, status: 'Processing' } : o
+  //     )
+  //   })
+
+  //   try {
+  //     const response = await printDocument(
+  //       file.url,
+  //       order.id,
+  //       printerName,
+  //       order.print_color,
+  //       order.no_of_copies
+  //     )
+
+  //     if (response && response.message) {
+  //       toast.success(`✅ Printed ${file.name}`, { id: printingToast })
+  //       // Update order status to Complete after successful print
+  //       queryClient.setQueryData(['recentOrders'], (oldData) => {
+  //         if (!oldData) return oldData
+  //         return oldData.map(o =>
+  //           o.id === order.id ? { ...o } : o
+  //         )
+  //       })
+
+  //       // Wait a moment for backend to update, then invalidate cache
+  //       setTimeout(async () => {
+  //         await queryClient.invalidateQueries(['recentOrders'])
+  //         console.log('✓ Refreshed orders after print')
+  //       }, 500)
+  //     } else {
+  //       toast.error(`❌ Print failed: ${response?.error || 'Unknown error'}`, { id: printingToast })
+  //     }
+  //   } catch (error) {
+  //     toast.error(`❌ Print error: ${error.message}`, { id: printingToast })
+  //   }
+  // }, [queryClient])\
+
+  // ── Helper: Load printer job-routing settings from localStorage ──
+  const getPrinterSettings = () => {
+    try {
+      const raw = localStorage.getItem("printerJobRouting")
+      return raw ? JSON.parse(raw) : null
+    } catch {
+      return null
+    }
+  }
+
+  // ── Helper: Pick the right printer based on order specs ──
+  const resolveTargetPrinter = (order, files) => {
+    const settings = getPrinterSettings()
+    if (!settings) return { printer: null, reason: "no_settings" }
+
+    const isColor = order.print_color?.toLowerCase() === "color"
+    const totalPages = order.no_of_pages || 0
+    const totalFiles = files?.length || 1
+    const isUrgent = order.is_urgent === true || order.priority === "urgent"
+    const isBulk = totalFiles > 3
+
+    let key = "documentPrinting"
+    if (isUrgent) key = "urgentJobs"
+    else if (isBulk) key = "bulkJobs"
+    else if (isColor) key = "colorPrinting"
+    else if (totalPages > 10) key = "largeFiles"
+    else key = "smallFiles"
+
+    const printer = settings[key]
+    if (!printer) return { printer: null, reason: "no_settings" }
+    return { printer, reason: key }
+  }
+
+  const routingLabel = {
+    urgentJobs: "Urgent Job",
+    bulkJobs: "Bulk Order",
+    colorPrinting: "Color Printing",
+    bwPrinting: "B&W Printing",
+    largeFiles: "Large File",
+    smallFiles: "Small File",
+    photosPrinting: "Photo Printing",
+    documentPrinting: "Document Printing",
+  }
+
+  // ── Helper: update a single order in the query cache ──
+  const patchOrder = (queryClient, orderId, patch) => {
+    queryClient.setQueryData(["recentOrders"], (old) =>
+      old ? old.map(o => o.id === orderId ? { ...o, ...patch } : o) : old
+    )
+  }
+
+  // ─────────────────────────────────────────────
+  // MAIN HANDLER
+  // ─────────────────────────────────────────────
   const handlePrintFile = useCallback(async (file, order) => {
-    const printerName = getSelectedPrinter()
+
+    // ── 1. Resolve printer ──
+    const allFiles = order.files || [file]
+    const { printer: printerName, reason } = resolveTargetPrinter(order, allFiles)
+
     if (!printerName) {
-      toast.error("⚠️ Please select a printer first.")
+      toast(
+        (t) => (
+          <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span>⚙️ Printer routing is not configured.</span>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id)
+                window.location.href = "/dashboard/settings/printer"
+              }}
+              style={{
+                padding: "4px 10px", borderRadius: "6px", background: "#6366f1",
+                color: "#fff", border: "none", cursor: "pointer",
+                fontWeight: 600, fontSize: "13px", whiteSpace: "nowrap",
+              }}
+            >
+              Go to Settings →
+            </button>
+          </span>
+        ),
+        { duration: 6000 }
+      )
       return
     }
 
-    const printingToast = toast.loading(`Printing ${file.name}...`)
-    // Update order status to Complete after successful print
-    queryClient.setQueryData(['recentOrders'], (oldData) => {
-      if (!oldData) return oldData
-      return oldData.map(o =>
-        o.id === order.id ? { ...o, status: 'Processing' } : o
+    const label = routingLabel[reason] || reason
+
+    // ── 2. DOWNLOADING ──
+    patchOrder(queryClient, order.id, { status: "Downloading" })
+
+    const downloadToast = toast.loading(
+      `⬇️ Downloading "${file.name}"...`,
+      { id: `download-${order.id}` }
+    )
+
+    let downloadedBlob
+    try {
+      const res = await fetch(file.url)
+      if (!res.ok) throw new Error(`Download failed (${res.status})`)
+      downloadedBlob = await res.blob()
+
+      toast.success(
+        `✅ "${file.name}" downloaded successfully`,
+        { id: downloadToast, duration: 2500 }
       )
-    })
+    } catch (error) {
+      toast.error(
+        `❌ Download failed: ${error.message}`,
+        { id: downloadToast }
+      )
+      patchOrder(queryClient, order.id, { status: "Failed" })
+      queryClient.invalidateQueries(["recentOrders"])
+      return
+    }
+
+    // Small gap so user sees the download-success toast before print starts
+    await new Promise(r => setTimeout(r, 600))
+
+    // ── 3. PRINTING ──
+    patchOrder(queryClient, order.id, { status: "Processing" })
+
+    const printToast = toast.loading(
+      `🖨️ Printing "${file.name}" on ${printerName} · ${label}...`,
+      { id: `print-${order.id}` }
+    )
 
     try {
       const response = await printDocument(
@@ -300,40 +459,183 @@ const RecentOrders = ({ selectedPrinter }) => {
         order.no_of_copies
       )
 
-      if (response && response.message) {
-        toast.success(`✅ Printed ${file.name}`, { id: printingToast })
-        // Update order status to Complete after successful print
-        queryClient.setQueryData(['recentOrders'], (oldData) => {
-          if (!oldData) return oldData
-          return oldData.map(o =>
-            o.id === order.id ? { ...o, status: 'Complete' } : o
-          )
-        })
+      if (response?.message) {
 
-        // Wait a moment for backend to update, then invalidate cache
-        setTimeout(async () => {
-          await queryClient.invalidateQueries(['recentOrders'])
-          console.log('✓ Refreshed orders after print')
+        // ── 4. PROCESSING (printer is spooling) ──
+        patchOrder(queryClient, order.id, { status: "Processing" })
+
+        toast.loading(
+          `⚙️ Processing print job on ${printerName}...`,
+          { id: printToast, duration: 1500 }
+        )
+
+        await new Promise(r => setTimeout(r, 1500))
+
+        // ── 5. COMPLETE ──
+        patchOrder(queryClient, order.id, { status: "Processing" })
+
+        toast.success(
+          (t) => (
+            <span>
+              <span style={{ fontWeight: 700 }}>🎉 Print Complete!</span>
+              <br />
+              <span style={{ fontSize: "13px", color: "#374151" }}>
+                "{file.name}" printed on <b>{printerName}</b> · {label}
+              </span>
+            </span>
+          ),
+          { id: printToast, duration: 5000 }
+        )
+
+        // Sync with server after completion
+        setTimeout(() => {
+          queryClient.invalidateQueries(["recentOrders"])
+          console.log("✓ Orders refreshed after print complete")
         }, 500)
+
       } else {
-        toast.error(`❌ Print failed: ${response?.error || 'Unknown error'}`, { id: printingToast })
+        throw new Error(response?.error || "Unknown print error")
       }
+
     } catch (error) {
-      toast.error(`❌ Print error: ${error.message}`, { id: printingToast })
+      toast.error(
+        `❌ Print error: ${error.message}`,
+        { id: printToast }
+      )
+      patchOrder(queryClient, order.id, { status: "Failed" })
+      queryClient.invalidateQueries(["recentOrders"])
     }
+
   }, [queryClient])
 
+
+  // const handlePrintAllFiles = useCallback(async (files, order) => {
+  //   const printerName = getSelectedPrinter()
+  //   if (!printerName) {
+  //     toast.error("⚠️ Please select a printer first.")
+  //     return
+  //   }
+
+  //   toast.loading(`Printing ${files.length} file(s)...`, { duration: 2000 })
+
+  //   let allPrinted = true
+  //   for (const file of files) {
+  //     try {
+  //       const response = await printDocument(
+  //         file.url,
+  //         order.id,
+  //         printerName,
+  //         order.print_color,
+  //         order.no_of_copies
+  //       )
+  //       if (!response || !response.message) {
+  //         allPrinted = false
+  //       }
+  //       await new Promise(resolve => setTimeout(resolve, 1000))
+  //     } catch (error) {
+  //       console.error(`Error printing ${file.name}:`, error)
+  //       allPrinted = false
+  //     }
+  //   }
+
+  //   if (allPrinted) {
+  //     toast.success(`✅ Printed ${files.length} file(s)!`, { duration: 3000 })
+
+  //     // Wait a moment for backend to update, then invalidate cache
+  //     setTimeout(async () => {
+  //       await queryClient.invalidateQueries(['recentOrders'])
+  //       console.log('✓ Refreshed orders after print')
+  //     }, 500)
+  //   } else {
+  //     toast.error(`❌ Some files failed to print`, { duration: 3000 })
+  //   }
+  // }, [queryClient])
+
+
   const handlePrintAllFiles = useCallback(async (files, order) => {
-    const printerName = getSelectedPrinter()
+
+    // ── 1. Resolve printer from routing settings ──
+    const allFiles = files || []
+    const { printer: printerName, reason } = resolveTargetPrinter(order, allFiles)
+
     if (!printerName) {
-      toast.error("⚠️ Please select a printer first.")
+      toast(
+        (t) => (
+          <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span>⚙️ Printer routing is not configured.</span>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id)
+                window.location.href = "/dashboard/settings/printer"
+              }}
+              style={{
+                padding: "4px 10px", borderRadius: "6px", background: "#6366f1",
+                color: "#fff", border: "none", cursor: "pointer",
+                fontWeight: 600, fontSize: "13px", whiteSpace: "nowrap",
+              }}
+            >
+              Go to Settings →
+            </button>
+          </span>
+        ),
+        { duration: 6000 }
+      )
       return
     }
 
-    toast.loading(`Printing ${files.length} file(s)...`, { duration: 2000 })
+    const label = routingLabel[reason] || reason
+    const total = allFiles.length
+    let passed = 0
+    let failed = 0
 
-    let allPrinted = true
-    for (const file of files) {
+    // ── 2. Mark order as Downloading ──
+    patchOrder(queryClient, order.id, { status: "Downloading" })
+
+    // Summary toast that stays throughout
+    const summaryToast = toast.loading(
+      `⬇️ Starting download of ${total} file(s)...`,
+      { id: `all-summary-${order.id}` }
+    )
+
+    // ── 3. Process each file sequentially ──
+    for (let i = 0; i < allFiles.length; i++) {
+      const file = allFiles[i]
+      const fileNum = `[${i + 1}/${total}]`
+
+      // ── DOWNLOADING ──
+      const dlToast = toast.loading(
+        `⬇️ ${fileNum} Downloading "${file.name}"...`,
+        { id: `dl-${order.id}-${i}` }
+      )
+
+      try {
+        const res = await fetch(file.url)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        await res.blob() // ensure fully downloaded
+
+        toast.success(
+          `✅ ${fileNum} "${file.name}" downloaded`,
+          { id: dlToast, duration: 2000 }
+        )
+      } catch (err) {
+        toast.error(
+          `❌ ${fileNum} Download failed: ${err.message}`,
+          { id: dlToast, duration: 3000 }
+        )
+        failed++
+        continue // skip to next file
+      }
+
+      await new Promise(r => setTimeout(r, 500))
+
+      // ── PRINTING ──
+      patchOrder(queryClient, order.id, { status: "Printing" })
+
+      const printToast = toast.loading(
+        `🖨️ ${fileNum} Printing "${file.name}" on ${printerName} · ${label}...`,
+        { id: `pt-${order.id}-${i}` }
+      )
+
       try {
         const response = await printDocument(
           file.url,
@@ -342,27 +644,77 @@ const RecentOrders = ({ selectedPrinter }) => {
           order.print_color,
           order.no_of_copies
         )
-        if (!response || !response.message) {
-          allPrinted = false
+
+        if (response?.message) {
+
+          // ── PROCESSING ──
+          patchOrder(queryClient, order.id, { status: "Processing" })
+
+          toast.loading(
+            `⚙️ ${fileNum} Processing "${file.name}" on ${printerName}...`,
+            { id: printToast, duration: 1500 }
+          )
+
+          await new Promise(r => setTimeout(r, 1500))
+
+          toast.success(
+            `🎉 ${fileNum} "${file.name}" printed on ${printerName}`,
+            { id: printToast, duration: 3000 }
+          )
+
+          passed++
+
+        } else {
+          throw new Error(response?.error || "Unknown error")
         }
-        await new Promise(resolve => setTimeout(resolve, 1000))
-      } catch (error) {
-        console.error(`Error printing ${file.name}:`, error)
-        allPrinted = false
+
+      } catch (err) {
+        toast.error(
+          `❌ ${fileNum} Print failed: ${err.message}`,
+          { id: printToast, duration: 3000 }
+        )
+        failed++
       }
+
+      // Gap between files so toasts don't pile up
+      await new Promise(r => setTimeout(r, 800))
     }
 
-    if (allPrinted) {
-      toast.success(`✅ Printed ${files.length} file(s)!`, { duration: 3000 })
-
-      // Wait a moment for backend to update, then invalidate cache
-      setTimeout(async () => {
-        await queryClient.invalidateQueries(['recentOrders'])
-        console.log('✓ Refreshed orders after print')
-      }, 500)
+    // ── 4. Final summary toast ──
+    if (failed === 0) {
+      patchOrder(queryClient, order.id, { status: "Completed" })
+      toast.success(
+        (t) => (
+          <span>
+            <span style={{ fontWeight: 700 }}>🎉 All {total} file(s) printed!</span>
+            <br />
+            <span style={{ fontSize: "13px", color: "#374151" }}>
+              Printer: <b>{printerName}</b> · {label}
+            </span>
+          </span>
+        ),
+        { id: summaryToast, duration: 6000 }
+      )
+    } else if (passed === 0) {
+      patchOrder(queryClient, order.id, { status: "Failed" })
+      toast.error(
+        `❌ All ${total} file(s) failed to print`,
+        { id: summaryToast, duration: 5000 }
+      )
     } else {
-      toast.error(`❌ Some files failed to print`, { duration: 3000 })
+      patchOrder(queryClient, order.id, { status: "Partial" })
+      toast(
+        `⚠️ ${passed} of ${total} file(s) printed · ${failed} failed`,
+        { id: summaryToast, icon: "⚠️", duration: 5000 }
+      )
     }
+
+    // ── 5. Sync with server ──
+    setTimeout(() => {
+      queryClient.invalidateQueries(["recentOrders"])
+      console.log("✓ Orders refreshed after bulk print")
+    }, 500)
+
   }, [queryClient])
 
   const handleMouseEnter = useCallback((orderId, type) => {
@@ -429,7 +781,7 @@ const RecentOrders = ({ selectedPrinter }) => {
           <h3>Recent Orders({filteredOrders.length})</h3>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <label className="switch">
             <input
               type="checkbox"
@@ -444,7 +796,7 @@ const RecentOrders = ({ selectedPrinter }) => {
             <span className="slider round"></span>
           </label>
           <span style={{ marginLeft: "8px" }}>Auto Print First 5 Pending</span>
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-4">
           <div className="orders-actions flex items-center gap-2">
@@ -661,10 +1013,10 @@ const RecentOrders = ({ selectedPrinter }) => {
                         </AnimatePresence>
                       </div>
 
-                      <AnimatedTrashButton
+                      {/* <AnimatedTrashButton
                         title="Delete Order"
                         size={20}
-                      />
+                      /> */}
                     </td>
                   </motion.tr>
                 )
