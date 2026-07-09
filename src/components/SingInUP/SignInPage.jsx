@@ -471,7 +471,7 @@ function SignInForm() {
                     </>
                 )}
             </div>
-            <GoogleLogin
+            {/* <GoogleLogin
                 onSuccess={async (credentialResponse) => {
 
                     const res = await googleLogin(
@@ -494,8 +494,8 @@ function SignInForm() {
                     alert("Google Login Failed");
 
                 }}
-            />
-            <GoogleLogin
+            /> */}
+            {/* <GoogleLogin
                 text="continue_with"
                 onSuccess={async (response) => {
 
@@ -512,7 +512,7 @@ function SignInForm() {
                     toast.success("Google account linked.");
 
                 }}
-            />
+            /> */}
         </div>
     );
 }

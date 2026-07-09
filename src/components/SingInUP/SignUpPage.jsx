@@ -376,7 +376,7 @@ function SignUpForm() {
         )}
       </form>
 
-      <GoogleLogin
+      {/* <GoogleLogin
         onSuccess={async (credentialResponse) => {
 
           const res = await googleSignup(
@@ -400,7 +400,7 @@ function SignUpForm() {
           alert("Signup Failed");
 
         }}
-      />
+      /> */}
     </div>
   );
 }
