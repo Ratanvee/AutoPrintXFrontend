@@ -992,6 +992,7 @@
 
 .table-responsive {
   overflow-x: auto;
+  min-height: 500px;
 }
 
 .recent-orders table {
