@@ -374,7 +374,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
     console.log(url);
     console.log(import.meta.env.VITE_BaseURL1);
 
-    window.open(url);
+    window.open(url, "_self");
     toast.success(`Downloading ${FILENAME}...`, { duration: 3000 })
     setShowUpdatePopup(false)
   }
