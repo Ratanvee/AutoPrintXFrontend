@@ -370,6 +370,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   const { color, label, pulse } = statusConfig[agentStatus] ?? statusConfig.offline
 
   const handleDownload = () => {
+    window.open(DOWNLOAD_LINK)
     window.open(DOWNLOAD_LINK, "_blank")
     toast.success(`Downloading ${FILENAME}...`, { duration: 3000 })
     setShowUpdatePopup(false)
