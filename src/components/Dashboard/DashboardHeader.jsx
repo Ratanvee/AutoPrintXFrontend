@@ -331,7 +331,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
       const data = await checkPrinterAgentStatus()
       const isOnline = data?.status === "online"
       const ver = data?.version || null
-      
+
       setAgentVersion(ver)
       // Version mismatch — show update popup once
       if (isOnline && ver && EXPECTED_VERSION && ver !== EXPECTED_VERSION) {
@@ -369,7 +369,12 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   const { color, label, pulse } = statusConfig[agentStatus] ?? statusConfig.offline
 
   const handleDownload = () => {
-    window.open(`${import.meta.env.VITE_BaseURL1}download-printer-agent/`);
+    const url = `${import.meta.env.VITE_BaseURL1}download-printer-agent/`;
+
+    console.log(url);
+    console.log(import.meta.env.VITE_BaseURL1);
+
+    window.open(url);
     toast.success(`Downloading ${FILENAME}...`, { duration: 3000 })
     setShowUpdatePopup(false)
   }
@@ -419,7 +424,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
           </div>
 
           {/* ── Download / Update button — shown only when needed ── */}
-          <AnimatePresence>
+          {/* <AnimatePresence>
             {showDownload && (
               <motion.button
                 key="dl-btn"
@@ -439,7 +444,16 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
                 {versionMismatch ? "Update Agent" : "Download Agent"}
               </motion.button>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
+          <button
+            onClick={() => {
+              console.log("clicked");
+              handleDownload();
+            }}
+          >
+            Download
+          </button>
+
 
           {/* Notifications */}
           <motion.div className="notification" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => setShowNotifications(!showNotifications)}>
