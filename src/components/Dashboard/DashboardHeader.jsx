@@ -296,8 +296,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   const dismissedRef = React.useRef(false)  // tracks if user dismissed this session
 
   const EXPECTED_VERSION = import.meta.env.VITE_AGENT_VERSION   // e.g. "v1.4.2"
-  const DOWNLOAD_LINK = import.meta.env.VITE_Google_drive_download_link
-  const FILENAME = "AutoPrintXAgent.exe"
+  const FILENAME = "AutoPrintX-Agent-Setup.exe"
 
   // ── Check agent status + version ──
   const checkAgent = async () => {
@@ -370,8 +369,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   const { color, label, pulse } = statusConfig[agentStatus] ?? statusConfig.offline
 
   const handleDownload = () => {
-    window.open(DOWNLOAD_LINK)
-    window.open(DOWNLOAD_LINK, "_blank")
+    window.open(`${import.meta.env.VITE_BaseURL1}download-printer-agent/`);
     toast.success(`Downloading ${FILENAME}...`, { duration: 3000 })
     setShowUpdatePopup(false)
   }
