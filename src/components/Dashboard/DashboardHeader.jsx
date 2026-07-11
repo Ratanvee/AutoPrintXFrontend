@@ -369,54 +369,17 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   }
   const { color, label, pulse } = statusConfig[agentStatus] ?? statusConfig.offline
 
-  // const handleDownload = () => {
-  //   const url = `${import.meta.env.VITE_BaseURL1}download-printer-agent/`;
+  const handleDownload = () => {
+    // const url = `https://github.com/Ratanvee/AutoPrintXAgent/releases/download/v${import.meta.env.VITE_AGENT_VERSION}/AutoPrintX-Agent-Setup.exe`;
+    const url = `https://github.com/Ratanvee/AutoPrintX-Agent-Releases/releases/download/v${import.meta.env.VITE_AGENT_VERSION}/AutoPrintX-Agent-Setup.exe`;
 
-  //   console.log(url);
-  //   console.log(import.meta.env.VITE_BaseURL1);
+    console.log(url);
+    console.log(import.meta.env.VITE_BaseURL1);
 
-  //   window.open(url, "_self");
-  //   toast.success(`Downloading ${FILENAME}...`, { duration: 3000 })
-  //   setShowUpdatePopup(false)
-  // }
-
-  const handleDownload = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BaseURL1}download-printer-agent/`,
-        {
-          responseType: "blob",
-          withCredentials: true,
-        }
-      );
-
-      const blob = new Blob([response.data]);
-
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = "AutoPrintX-Agent-Setup.exe";
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      link.remove();
-
-      window.URL.revokeObjectURL(url);
-
-      toast.success("Download Started");
-
-    } catch (err) {
-
-      console.error(err);
-
-      toast.error("Unable to download Agent.");
-
-    }
-  };
+    window.open(url, "_self");
+    toast.success(`Downloading ${FILENAME}...`, { duration: 3000 })
+    setShowUpdatePopup(false)
+  }
 
   return (
     <>
@@ -463,7 +426,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
           </div>
 
           {/* ── Download / Update button — shown only when needed ── */}
-          {/* <AnimatePresence>
+          <AnimatePresence>
             {showDownload && (
               <motion.button
                 key="dl-btn"
@@ -483,15 +446,15 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
                 {versionMismatch ? "Update Agent" : "Download Agent"}
               </motion.button>
             )}
-          </AnimatePresence> */}
-          <button
+          </AnimatePresence>
+          {/* <button
             onClick={() => {
               console.log("clicked");
               handleDownload();
             }}
           >
             Download
-          </button>
+          </button> */}
 
 
           {/* Notifications */}
