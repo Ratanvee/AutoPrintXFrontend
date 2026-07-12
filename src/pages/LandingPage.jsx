@@ -80,7 +80,7 @@ const LandingPage = () => {
                         <li><a href="#services">Services</a></li>
                         <li><a href="#about">About</a></li>
                         <li><a href="#contact">Contact</a></li>
-                        <li><a href="/login" className="dashboard btn-secondary">Dashboard</a></li>
+                        <li><span href="/dashboard" className="dashboard btn-secondary">Dashboard</span></li>
                     </ul>
                     <div className={`hamburger ${isActive ? "active" : ""}`}
                         onClick={toggleMenu}

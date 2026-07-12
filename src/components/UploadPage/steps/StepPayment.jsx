@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreditCard, ArrowLeft, ArrowRight, IndianRupee, ChevronLeft } from "lucide-react";
-import { CreateOrdersRazorpay } from '../../../api/endpoints';
+// import { CreateOrdersRazorpay } from '../../../api/endpoints';
 import LoadingButton from "../../SingInUP/components/LoadingButton";
 
 export default function StepPayment({
@@ -18,26 +18,27 @@ export default function StepPayment({
     prevStep
 }) {
     const handlePayment = async (e) => {
-        e.preventDefault();
-        const order = await CreateOrdersRazorpay(JSON.stringify({ amount }));
+        // e.preventDefault();
+        // const order = await CreateOrdersRazorpay(JSON.stringify({ amount }));
 
-        const options = {
-            key: import.meta.env.VITE_RazorPay_Key,
-            amount: order.amount || amount * 100,
-            currency: order.currency || "INR",
-            name: "PrintEase",
-            description: "Test Transaction",
-            order_id: order.id,
-            handler: function (res) {
-                let paidAmount = order.amount / 100;
-                setTransactionId(res.razorpay_payment_id);
-                alert(`Payment successful! ₹${paidAmount} paid. Transaction ID: ${res.razorpay_payment_id}`);
-            },
-            theme: { color: "#3399cc" },
-        };
+        // const options = {
+        //     key: import.meta.env.VITE_RazorPay_Key,
+        //     amount: order.amount || amount * 100,
+        //     currency: order.currency || "INR",
+        //     name: "PrintEase",
+        //     description: "Test Transaction",
+        //     order_id: order.id,
+        //     handler: function (res) {
+        //         let paidAmount = order.amount / 100;
+        //         setTransactionId(res.razorpay_payment_id);
+        //         alert(`Payment successful! ₹${paidAmount} paid. Transaction ID: ${res.razorpay_payment_id}`);
+        //     },
+        //     theme: { color: "#3399cc" },
+        // };
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
+        // const rzp = new window.Razorpay(options);
+        // rzp.open();
+        console.log("Payment initiated for amount:", amount);
     };
 
     const handleCompleteOrder = () => {

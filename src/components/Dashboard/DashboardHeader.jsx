@@ -354,7 +354,7 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
   // Poll every 5s
   useEffect(() => {
     checkAgent()
-    const interval = setInterval(checkAgent, 5000)
+    const interval = setInterval(checkAgent, 10000)
     return () => clearInterval(interval)
   }, [])
 

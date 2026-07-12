@@ -220,7 +220,7 @@ export const is_authenticated = async () => {
   // console.log("Checking authentication status..................");
   try {
     await axios.get(AUTH_URL, { withCredentials: true, credentials: 'include' });
-    console.log("User is authenticated.");
+    // console.log("User is authenticated.");
     return true;
   } catch (error) {
     console.error("Auth Check Error:", error);
@@ -412,20 +412,20 @@ export const UploadDataAPIWithRetry = async (data, uniqueUrl, maxRetries = 2) =>
   return { error: 'Upload failed after retries' };
 };
 
-export const CreateOrdersRazorpay = async (data) => {
-  try {
-    const response = await fetch(CREATEORDERS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
-      body: data,
-    });
-    return response.json();
-  } catch (error) {
-    console.error("Create Order Error : ", error)
-    return false;
-  }
-};
+// export const CreateOrdersRazorpay = async (data) => {
+//   try {
+//     const response = await fetch(CREATEORDERS_URL, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       withCredentials: true,
+//       body: data,
+//     });
+//     return response.json();
+//   } catch (error) {
+//     console.error("Create Order Error : ", error)
+//     return false;
+//   }
+// };
 
 // 1. Send OTP
 export const sendOTPAPI = async (emailOrPhone, purpose) => {
