@@ -318,8 +318,8 @@ const ProductsManagement = () => {
                         <td style={{ fontSize: "12px", color: "#6b7280" }}>{s.unit}</td>
                         <td className="price">
                           {s.price > 0
-                            ? <span style={{ fontWeight: 700, color: "#059669" }}>₹{s.price}</span>
-                            : <span style={{ color: "#9ca3af", fontSize: "12px" }}>Not set</span>
+                            ? <span style={{ fontWeight: 700, color: "#059669", fontSize: "24px" }}>₹{s.price}</span>
+                            : <span style={{ color: "#9ca3af", fontSize: "16px" }}>Not set</span>
                           }
                         </td>
                         <td style={{ fontWeight: 600 }}>{s.sales}</td>
