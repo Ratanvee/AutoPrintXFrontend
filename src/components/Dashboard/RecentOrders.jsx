@@ -1119,7 +1119,7 @@ import { recentOrders } from "./api/endpoints"
 import { printDocument } from "./api/printerAgentapi"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import toast from "react-hot-toast"
-import FileActionsPopup from "./pops/FileActionPopUp"
+// import FileActionsPopup from "./pops/FileActionPopUp"
 
 // ─────────────────────────────────────────────
 // Helpers to figure out how a file should be previewed
@@ -1169,7 +1169,7 @@ const FileViewerPopup = ({ file, order, onClose }) => {
         initial={{ scale: 0.92, y: 16 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 16 }}
         transition={{ type: "spring", stiffness: 320, damping: 26 }}
         onClick={e => e.stopPropagation()}
-        style={{ background: "#fff", borderRadius: 14, width: "100%", maxWidth: 780, boxShadow: "0 20px 60px rgba(0,0,0,0.18)", overflow: "hidden", display: "flex", flexDirection: "column", maxHeight: "88vh" }}
+        style={{ background: "#fff", borderRadius: 14, width: "100%", maxWidth: 850, boxShadow: "0 20px 60px rgba(0,0,0,0.18)", overflow: "hidden", display: "flex", flexDirection: "column", maxHeight: "88vh" }}
       >
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #f0f0f0" }}>
