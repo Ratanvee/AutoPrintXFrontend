@@ -1315,8 +1315,8 @@ const OrderDetailPopup = ({ order, onClose }) => {
 // Now has an explicit action button (View / Print / Download) per row,
 // plus a "<Action> All" button in the header.
 // ─────────────────────────────────────────────
-const POPUP_WIDTH = 250
-const POPUP_ITEM_H = 40
+const POPUP_WIDTH = 210
+const POPUP_ITEM_H = 36
 const POPUP_HEADER_H = 38
 
 const ACTION_META = {
@@ -1398,6 +1398,16 @@ const SmartFileActionsPopup = ({ files, actionType, onAction, onActionAll, onClo
       >
         <HeaderIcon size={13} />
         <span>{meta.verb} All ({files.length})</span>
+        <button
+          onClick={onActionAll}
+          style={{
+            flexShrink: 0, display: "flex", alignItems: "center", gap: 4, padding: "4px 9px", borderRadius: 6,
+            border: `1px solid ${meta.color}33`, background: `${meta.color}7`, color: meta.color,
+            fontSize: 11, fontWeight: 600, cursor: "pointer", marginLeft: "auto", marginRight: 0,
+          }}
+        >
+          <HeaderIcon size={13} />  <span>{meta.verb} All</span>
+        </button>
       </button>
 
       {/* Individual files, each with its own action button */}
