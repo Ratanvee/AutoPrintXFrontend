@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/LandingPage.css';
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Printer, Copy, BookOpen, Truck, Check, Star, MapPin, Phone, Mail, Clock } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFacebookF,
@@ -65,6 +65,15 @@ const LandingPage = () => {
     const toggleMenu = () => {
         setIsActive(!isActive);
     };
+
+    const navigate = useNavigate();
+
+    const handleRedirect = () => {
+        navigate('/dashboard'); // Path to your inner page
+    };
+
+
+
     return (
         <div>
             <motion.header initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
@@ -80,7 +89,7 @@ const LandingPage = () => {
                         <li><a href="#services">Services</a></li>
                         <li><a href="#about">About</a></li>
                         <li><a href="#contact">Contact</a></li>
-                        <li><span href="/dashboard" className="dashboard btn-secondary">Dashboard</span></li>
+                        <li><button onClick={handleRedirect} className="dashboard btn-secondary">Dashboard</button></li>
                     </ul>
                     <div className={`hamburger ${isActive ? "active" : ""}`}
                         onClick={toggleMenu}
