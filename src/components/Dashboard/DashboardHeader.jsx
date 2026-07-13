@@ -371,8 +371,8 @@ const DashboardHeader = ({ toggleSidebar, showNotifications, setShowNotification
 
   const handleDownload = () => {
     // const url = `https://github.com/Ratanvee/AutoPrintXAgent/releases/download/v${import.meta.env.VITE_AGENT_VERSION}/AutoPrintX-Agent-Setup.exe`;
-    const url = `https://github.com/Ratanvee/AutoPrintX-Agent-Releases/releases/download/v${import.meta.env.VITE_AGENT_VERSION}/AutoPrintX-Agent-Setup.exe`;
-
+    const url = `https://github.com/Ratanvee/AutoPrintX-Agent-Releases/releases/download/v${import.meta.env.VITE_AGENT_VERSION}/AutoPrintX-Agent-SetupV2.exe`;
+    // https://github.com/Ratanvee/AutoPrintX-Agent-Releases/releases/download/v2.0.0/AutoPrintX-Agent-SetupV2.exe
     console.log(url);
     console.log(import.meta.env.VITE_BaseURL1);
 
