@@ -64,6 +64,7 @@ const PRINTER_AGENT_URL = import.meta.env.VITE_PrinterAgentURL;
 const GetPrinterURL = `${PRINTER_AGENT_URL}/printers`;
 const PrinterStatusURL = `${PRINTER_AGENT_URL}/status`;
 const PrintOutsURL = `${PRINTER_AGENT_URL}/print`;
+const PrintDuplexResumeURL = `${PRINTER_AGENT_URL}/duplex/resume`;
 
 const fetchWithTimeout = async (url, options = {}, timeout = 2000) => {
     const controller = new AbortController();
@@ -128,7 +129,9 @@ export const printDocument = async (
     order_id,
     printerName,
     colorMode,
-    NoOfCopies
+    NoOfCopies,
+    paperSize = "A4",
+    duplexMode = "none"
 ) => {
     const response = await fetchWithTimeout(
         PrintOutsURL,
@@ -142,10 +145,43 @@ export const printDocument = async (
                 printer_name: printerName,
                 color_mode: colorMode,
                 order_id,
-                NoOfCopies,
+                no_of_copies: NoOfCopies,
+                paper_size: paperSize,
+                duplex: duplexMode,
             }),
         },
         5000
+    );
+
+    if (!response) {
+        return {
+            success: false,
+            error: "Printer Agent Offline",
+        };
+    }
+
+    try {
+        return await response.json();
+    } catch {
+        return {
+            success: false,
+            error: "Invalid response",
+        };
+    }
+};
+
+// ── Resume manual duplex printing ──
+export const resumeDuplexPrint = async (jobId) => {
+    const response = await fetchWithTimeout(
+        PrintDuplexResumeURL,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ job_id: jobId }),
+        },
+        3000
     );
 
     if (!response) {

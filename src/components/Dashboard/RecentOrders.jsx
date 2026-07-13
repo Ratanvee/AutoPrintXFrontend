@@ -1119,6 +1119,7 @@ import { recentOrders } from "./api/endpoints"
 import { printDocument } from "./api/printerAgentapi"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import toast from "react-hot-toast"
+import PrintDuplexConfirmDialog from "./pops/PrintDuplexConfirmDialog"
 // import FileActionsPopup from "./pops/FileActionPopUp"
 
 // ─────────────────────────────────────────────
@@ -1455,9 +1456,11 @@ const RecentOrders = () => {
   const [detailOrder, setDetailOrder] = useState(null)   // for OrderDetailPopup
   const [displayLimit, setDisplayLimit] = useState(10)
   const [isFetching, setIsFetching] = useState(false)
+  const [duplexDialog, setDuplexDialog] = useState({ isOpen: false, file: null, order: null, jobId: null })
   const hoverTimeoutRef = useRef(null)
   const lastOrderCountRef = useRef(0)
   const autoPrintedOrdersRef = useRef(new Set())
+  const pendingPrintRef = useRef(null)
 
   // Refs for smart popup positioning
   const btnRefs = useRef({})
@@ -1471,6 +1474,7 @@ const RecentOrders = () => {
     queryKey: ["recentOrders"],
     queryFn: async () => {
       const data = await recentOrders()
+      console.log("Fetched recent orders:", data)
       return data?.orders || []
     },
     refetchInterval: (data) => {
@@ -1553,6 +1557,20 @@ const RecentOrders = () => {
     const { printer: printerName, reason } = resolveTargetPrinter(order, allFiles)
     if (!printerName) { noRouterToast(); return }
     const label = routingLabel[reason] || reason
+    const duplexMode = order.print_side?.toLowerCase() === "double" ? (order.duplex_mode || "auto") : "none"
+
+    // If manual duplex selected, show confirmation dialog
+    if (duplexMode === "manual") {
+      pendingPrintRef.current = { file, order, duplexMode }
+      setDuplexDialog({
+        isOpen: true,
+        file: file.name,
+        order: order
+      })
+      return
+    }
+
+    // Regular printing
     patchOrder(order.id, { status: "Downloading" })
     const dlToast = toast.loading(`⬇️ Downloading "${file.name}"...`, { id: `dl-${order.id}` })
     try {
@@ -1567,18 +1585,38 @@ const RecentOrders = () => {
       return
     }
     await new Promise(r => setTimeout(r, 600))
-    // patchOrder(order.id, { status: "Printing" })
-    const printToast = toast.loading(`🖨️ Printing on ${printerName} · ${label}...`, { id: `pt-${order.id}` })
+    
+    const duplexLabel = duplexMode === "manual" ? " (Manual Duplex)" : duplexMode === "auto" ? " (Auto Duplex)" : ""
+    const printToast = toast.loading(
+      `🖨️ Printing on ${printerName} · ${label}${duplexLabel}...`,
+      { id: `pt-${order.id}` }
+    )
     try {
-      const response = await printDocument(file.url, order.id, printerName, order.print_color, order.no_of_copies)
-      if (response?.message) {
+      const response = await printDocument(
+        file.url,
+        order.id,
+        printerName,
+        order.print_color,
+        order.no_of_copies,
+        order.paper_size || "A4",
+        duplexMode
+      )
+      if (response?.success || response?.message) {
         patchOrder(order.id, { status: "Processing" })
         toast.loading(`⚙️ Processing on ${printerName}...`, { id: printToast, duration: 1500 })
         await new Promise(r => setTimeout(r, 1500))
         patchOrder(order.id, { status: "Processing" })
-        toast.success(<span><b>🎉 Print Complete!</b><br /><span style={{ fontSize: 13 }}>"{file.name}" → <b>{printerName}</b> · {label}</span></span>, { id: printToast, duration: 5000 })
+        toast.success(
+          <span>
+            <b>🎉 Print Complete!</b><br />
+            <span style={{ fontSize: 13 }}>
+              "{file.name}" → <b>{printerName}</b> · {label}{duplexLabel}
+            </span>
+          </span>,
+          { id: printToast, duration: 5000 }
+        )
         setTimeout(() => queryClient.invalidateQueries(["recentOrders"]), 500)
-      } else throw new Error(response?.error || "Unknown error")
+      } else throw new Error(response?.error || response?.message || "Unknown error")
     } catch (e) {
       toast.error(`❌ Print error: ${e.message}`, { id: printToast })
       patchOrder(order.id, { status: "Failed" })
@@ -1623,6 +1661,73 @@ const RecentOrders = () => {
     else { patchOrder(order.id, { status: "Partial" }); toast(`⚠️ ${passed}/${total} printed · ${failed} failed`, { id: summaryToast, icon: "⚠️", duration: 5000 }) }
     setTimeout(() => queryClient.invalidateQueries(["recentOrders"]), 500)
   }, [queryClient])
+
+  // ── Duplex Dialog Handlers ──
+  const handleDuplexConfirm = useCallback(async () => {
+    if (!pendingPrintRef.current) return
+
+    const { file, order, duplexMode } = pendingPrintRef.current
+    const allFiles = order.files || [file]
+    const { printer: printerName, reason } = resolveTargetPrinter(order, allFiles)
+    if (!printerName) { noRouterToast(); return }
+    const label = routingLabel[reason] || reason
+
+    patchOrder(order.id, { status: "Downloading" })
+    const dlToast = toast.loading(`⬇️ Downloading "${file.name}"...`, { id: `dl-${order.id}` })
+    try {
+      const res = await fetch(file.url)
+      if (!res.ok) throw new Error(`${res.status}`)
+      await res.blob()
+      toast.success(`✅ "${file.name}" downloaded`, { id: dlToast, duration: 2000 })
+    } catch (e) {
+      toast.error(`❌ Download failed: ${e.message}`, { id: dlToast })
+      patchOrder(order.id, { status: "Failed" })
+      queryClient.invalidateQueries(["recentOrders"])
+      pendingPrintRef.current = null
+      return
+    }
+    await new Promise(r => setTimeout(r, 600))
+
+    const printToast = toast.loading(
+      `🖨️ Printing front side on ${printerName} · ${label}...`,
+      { id: `pt-${order.id}` }
+    )
+    try {
+      const response = await printDocument(
+        file.url,
+        order.id,
+        printerName,
+        order.print_color,
+        order.no_of_copies,
+        order.paper_size || "A4",
+        duplexMode
+      )
+      if (response?.success || response?.message) {
+        patchOrder(order.id, { status: "Processing" })
+        toast.success(
+          `🎉 Front side printed! Ready to flip pages and continue.`,
+          { id: printToast, duration: 5000 }
+        )
+        
+        // Update dialog state with jobId and move to pause stage
+        const jobId = response?.job_id || response?.code
+        setDuplexDialog(prev => ({ ...prev, jobId }))
+        
+        setTimeout(() => queryClient.invalidateQueries(["recentOrders"]), 500)
+      } else throw new Error(response?.error || response?.message || "Unknown error")
+    } catch (e) {
+      toast.error(`❌ Print error: ${e.message}`, { id: printToast })
+      patchOrder(order.id, { status: "Failed" })
+      queryClient.invalidateQueries(["recentOrders"])
+    }
+    pendingPrintRef.current = null
+  }, [queryClient])
+
+  const handleDuplexCancel = useCallback(() => {
+    setDuplexDialog({ isOpen: false, file: null, order: null })
+    pendingPrintRef.current = null
+    toast.error("Print canceled", { duration: 2000 })
+  }, [])
 
   // ── Hover logic ──
   const handleMouseEnter = useCallback((orderId, type) => {
@@ -1704,7 +1809,7 @@ const RecentOrders = () => {
                       <td className="order-customer">{order.customer}</td>
                       <td className="order-date">{order.date}</td>
                       <td className={getPaymentColor(order.payment_status)}>{order.amount}</td>
-                      <td>single</td>
+                      <td className="order-side">{order.print_side}</td>
                       <td><span className={`${getStatusColor(order.status)} status`}>{order.status}</span></td>
 
                       <td className="flex gap-2 recent-orders-actions">
@@ -1812,6 +1917,17 @@ const RecentOrders = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Duplex Confirmation Dialog */}
+      <PrintDuplexConfirmDialog
+        isOpen={duplexDialog.isOpen}
+        fileName={duplexDialog.file}
+        totalPages={duplexDialog.order?.no_of_pages || duplexDialog.order?.NoOfPages || 0}
+        copies={duplexDialog.order?.no_of_copies || 1}
+        jobId={duplexDialog.jobId}
+        onConfirm={handleDuplexConfirm}
+        onCancel={handleDuplexCancel}
+      />
     </>
   )
 }
