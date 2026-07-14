@@ -11,6 +11,12 @@ export default function NotFound() {
         return () => clearInterval(t)
     }, [])
 
+    const [isActive, setIsActive] = useState(false);
+        const toggleMenu = () => {
+            setIsActive(!isActive);
+        };
+    
+
     return (
         <div style={{
             minHeight: "100vh", background: "#f8fafc",
@@ -44,20 +50,20 @@ export default function NotFound() {
                         transition={{ duration: 0.5 }}>
                         <h1>Auto<span>PrintX</span></h1>
                     </motion.div>
-                    <ul className={`nav-links ${"isActive" ? "active" : ""}`}>
+                    <ul className={`nav-links ${isActive ? "active" : ""}`}>
                         <li><a href="/" className="active">Home</a></li>
                         <li><a href="/#services">Services</a></li>
                         <li><a href="/#about">About</a></li>
                         <li><a href="/#contact">Contact</a></li>
                         <li><button onClick={() => { window.location.href = `${import.meta.env.VITE_QRCodeURL}dashboard` }} className="dashboard btn-secondary">Dashboard</button></li>
                     </ul>
-                    {/* <div className={`hamburger ${isActive ? "active" : ""}`}
-                        // onClick={() => setIsActive(!isActive)}
+                    <div className={`hamburger ${isActive ? "active" : ""}`}
+                        onClick={() => setIsActive(!isActive)}
                     >
                         <span class="bar"></span>
                         <span class="bar"></span>
                         <span class="bar"></span>
-                    </div> */}
+                    </div>
                 </nav>
             </motion.header>
 
